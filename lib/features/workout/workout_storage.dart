@@ -16,6 +16,7 @@ class WorkoutStorage {
   static const String _keyWorkoutHistory = 'workout_history';
   static const String _keyStreak = 'streak';
   static const String _keyLastLoggedDate = 'last_logged_date';
+  static const String _keyTodayLogs = 'today_logs';
 
   // Settings & others (retaining some keys for seamless integration where needed)
   static const String _keyRemindersEnabled = 'reminders_enabled';
@@ -60,6 +61,9 @@ class WorkoutStorage {
     }
     if (!_prefs.containsKey(_keyStreak)) {
       await _prefs.setInt(_keyStreak, 0);
+    }
+    if (!_prefs.containsKey(_keyTodayLogs)) {
+      await _prefs.setString(_keyTodayLogs, '[]');
     }
   }
 
@@ -173,6 +177,22 @@ class WorkoutStorage {
 
   Future<void> saveSelectedExercise(ExerciseType exercise) async {
     await _prefs.setString(_keySelectedExercise, exercise.id);
+  }
+
+  List<ExerciseLog> getTodayLogs() {
+    final String? logsJson = _prefs.getString(_keyTodayLogs);
+    if (logsJson == null) return [];
+    try {
+      final List<dynamic> decoded = jsonDecode(logsJson);
+      return decoded.map((item) => ExerciseLog.fromJson(item)).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<void> saveTodayLogs(List<ExerciseLog> logs) async {
+    final String encoded = jsonEncode(logs.map((e) => e.toJson()).toList());
+    await _prefs.setString(_keyTodayLogs, encoded);
   }
 
   // --- TEMPORARY COMPATIBILITY WRAPPERS FOR CONTROLLER COMPILATION ---

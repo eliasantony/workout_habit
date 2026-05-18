@@ -22,7 +22,7 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 2: Workout Domain Model & Storage [Pending]
+## Phase 2: Workout Domain Model & Storage [Completed]
 - [x] Implement `ExerciseType` enum (Push-ups, Sit-ups, Squats, Planks, Custom).
 - [x] Implement `ExerciseLog` class with robust `fromJson` defensive parsing.
 - [x] Implement `DailyWorkoutHistory` model with list of logs.
@@ -32,12 +32,12 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 3: Controller & Business Logic [Pending]
-- [ ] Refactor `HydrationController` into `WorkoutController` (`ChangeNotifier`).
-- [ ] Implement `logExercise(ExerciseType, amount)` with strict positive-number checks.
-- [ ] Integrate streak validation based on completing combined daily target units.
-- [ ] Implement safe checks for "new day" transitions to reset today's units count to 0.
-- [ ] Update `_saveWidgetData()` to push `todayUnits`, `goalUnits`, `preferredExerciseLabel`, and `streak` to `home_widget`.
+## Phase 3: Controller & Business Logic [Completed]
+- [x] Refactor `HydrationController` into `WorkoutController` (`ChangeNotifier`).
+- [x] Implement `logExercise(ExerciseType, amount)` with strict positive-number checks.
+- [x] Integrate streak validation based on completing combined daily target units.
+- [x] Implement safe checks for "new day" transitions to reset today's units count to 0.
+- [x] Update `_saveWidgetData()` to push `todayUnits`, `goalUnits`, `preferredExerciseLabel`, and `streak` to `home_widget`.
 
 ---
 

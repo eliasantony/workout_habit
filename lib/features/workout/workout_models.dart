@@ -194,6 +194,7 @@ class WorkoutState {
   final int dailyGoalMl;
   final DateTime lastTrackedDate;
   final List<DailyWorkoutHistory> history;
+  final List<ExerciseLog> todayLogs;
 
   // Gamification
   final int currentStreak;
@@ -220,6 +221,7 @@ class WorkoutState {
     required this.dailyGoalMl,
     required this.lastTrackedDate,
     required this.history,
+    this.todayLogs = const [],
     required this.currentStreak,
     this.lastGoalMetDate,
     required this.remindersEnabled,
@@ -238,12 +240,15 @@ class WorkoutState {
 
   int get todayUnits => currentWaterMl;
   int get goalUnits => dailyGoalMl;
+  int get currentWorkoutUnits => currentWaterMl;
+  int get dailyWorkoutTargetUnits => dailyGoalMl;
 
   WorkoutState copyWith({
     int? currentWaterMl,
     int? dailyGoalMl,
     DateTime? lastTrackedDate,
     List<DailyWorkoutHistory>? history,
+    List<ExerciseLog>? todayLogs,
     int? currentStreak,
     DateTime? lastGoalMetDate,
     bool? remindersEnabled,
@@ -264,6 +269,7 @@ class WorkoutState {
       dailyGoalMl: dailyGoalMl ?? this.dailyGoalMl,
       lastTrackedDate: lastTrackedDate ?? this.lastTrackedDate,
       history: history ?? this.history,
+      todayLogs: todayLogs ?? this.todayLogs,
       currentStreak: currentStreak ?? this.currentStreak,
       lastGoalMetDate: lastGoalMetDate ?? this.lastGoalMetDate,
       remindersEnabled: remindersEnabled ?? this.remindersEnabled,
