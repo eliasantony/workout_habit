@@ -308,9 +308,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Intake', style: TextStyle(fontSize: 16)),
+                  const Text('Logged units', style: TextStyle(fontSize: 16)),
                   Text(
-                    '$consumed / $goal ml',
+                    '$consumed / $goal units',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -332,7 +332,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Icon(Icons.check_circle, color: Colors.green),
                     SizedBox(width: 8),
                     Text(
-                      'Daily Goal Reached!',
+                      'Daily Workout Goal Reached!',
                       style: TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
@@ -342,7 +342,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 )
               else
                 Text(
-                  '${goal - consumed} ml remaining',
+                  '${goal - consumed} units remaining',
                   style: theme.textTheme.bodySmall,
                 ),
             ],

@@ -7,7 +7,7 @@ import 'package:workout_habit/features/workout/workout_storage.dart';
 import 'package:workout_habit/services/notification_service.dart';
 
 void main() {
-  testWidgets('Hydration screen smoke test', (WidgetTester tester) async {
+  testWidgets('Workout Habit screen smoke test', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final storage = WorkoutStorage(prefs);
@@ -22,15 +22,15 @@ void main() {
 
     // Verify that the title and some text are present.
     expect(
-      find.text('Hydro Habit'),
+      find.text('Workout Habit'),
       findsAtLeast(1),
     ); // Title in AppBar and possibly elsewhere
     expect(find.text('0'), findsOneWidget);
-    expect(find.text('of 50 ml'), findsOneWidget);
-    expect(find.text("Let's start with one glass. 💧"), findsOneWidget);
+    expect(find.text('of 50 units'), findsOneWidget);
+    expect(find.text("Let's get moving! 💪"), findsOneWidget);
 
     // Verify the add buttons are present.
-    expect(find.text('5 ml'), findsOneWidget);
-    expect(find.text('10 ml'), findsOneWidget);
+    expect(find.text('5 units'), findsOneWidget);
+    expect(find.text('10 units'), findsOneWidget);
   });
 }

@@ -41,6 +41,21 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
+## Cleanup Checkpoint: Legacy Label Purge [Completed]
+- [x] Rename smoke test name from "Hydration screen smoke test" to "Workout Habit screen smoke test".
+- [x] Adapt widget test expectations to workout-oriented strings.
+- [x] Clean up obvious app-facing water/hydration/ml/drink water labels to workout/units counterparts in:
+  - `lib/features/workout/workout_screen.dart`
+  - `lib/features/workout/widgets/log_exercise_dialog.dart`
+  - `lib/features/settings/settings_screen.dart`
+  - `lib/features/history/history_screen.dart`
+  - `lib/services/notification_service.dart`
+  - `lib/main_screen.dart`
+- [x] Verify clean compilation with `flutter analyze` (0 issues).
+- [x] Verify all tests pass with `flutter test` (all tests passed!).
+
+---
+
 ## Phase 4: Interactive UI Refactoring [Pending]
 - [ ] Adapt home screen (`workout_screen.dart`) to show workout progress.
 - [ ] Replace water mascot with Workout Mascot reacting with motivational badges (💪, 🔥, 🏆).

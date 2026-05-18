@@ -90,13 +90,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _resetWater() {
+  void _resetWorkoutProgress() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset Today?'),
         content: const Text(
-          'Are you sure you want to reset your water intake for today?',
+          'Are you sure you want to reset your workout progress for today?',
         ),
         actions: [
           TextButton(
@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     ListTile(
                       title: const Text('Theme Mode'),
-                      subtitle: const Text('Choose how Hydro Habit looks'),
+                      subtitle: const Text('Choose how Workout Habit looks'),
                       trailing: SegmentedButton<ThemeMode>(
                         segments: const [
                           ButtonSegment(
@@ -240,8 +240,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 24),
               const _SectionHeader(
-                title: 'Hydration Goal',
-                icon: Icons.water_drop_rounded,
+                title: 'Workout Target',
+                icon: Icons.fitness_center_rounded,
               ),
               Card(
                 child: Padding(
@@ -250,7 +250,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'How much water do you want to drink daily?',
+                        'What is your daily target (in units)?',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       const SizedBox(height: 16),
@@ -261,7 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: _goalController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                suffixText: 'ml',
+                                suffixText: 'units',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -304,7 +304,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Small',
-                                suffixText: 'ml',
+                                suffixText: 'units',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -319,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Large',
-                                suffixText: 'ml',
+                                suffixText: 'units',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -357,7 +357,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     SwitchListTile(
                       title: const Text('Enable Reminders'),
-                      subtitle: const Text('Stay hydrated throughout the day'),
+                      subtitle: const Text(
+                        'Get reminders to work out throughout the day',
+                      ),
                       value: state.remindersEnabled,
                       onChanged: (value) {
                         widget.controller.updateRemindersEnabled(value);
@@ -408,7 +410,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SwitchListTile(
                       title: const Text('Evening Goal Check'),
                       subtitle: const Text(
-                        'Notify if goal is not met by evening',
+                        'Notify if workout target is not met by evening',
                       ),
                       value: state.eveningCheckEnabled,
                       onChanged: (value) {
@@ -532,7 +534,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   side: BorderSide(color: Colors.red.withValues(alpha: 0.1)),
                 ),
                 child: ListTile(
-                  onTap: _resetWater,
+                  onTap: _resetWorkoutProgress,
                   leading: const Icon(Icons.refresh_rounded, color: Colors.red),
                   title: const Text(
                     'Reset Today\'s Progress',
@@ -541,7 +543,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text('This will clear all entries for today'),
+                  subtitle: const Text(
+                    'This will clear all workout logs for today',
+                  ),
                   trailing: const Icon(
                     Icons.chevron_right_rounded,
                     color: Colors.red,

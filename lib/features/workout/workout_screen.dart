@@ -27,7 +27,7 @@ class WorkoutScreen extends StatefulWidget {
             const Text('🎉', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 16),
             const Text(
-              'Amazing work! Your body is hydrated and happy. Keep up the streak!',
+              'Amazing work! You crushed your workout goal today. Keep up the streak!',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -116,7 +116,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Hydro Habit'),
+            title: const Text('Workout Habit'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -148,7 +148,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         _DropletMascot(progress: progress),
                         const SizedBox(height: 12),
                         Text(
-                          'Small sips. Big streaks.',
+                          'One rep at a time. Big streaks.',
                           style: theme.textTheme.labelSmall,
                         ),
                       ],
@@ -170,9 +170,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         ),
                         if (state.currentStreak >= 3)
                           const _BadgeChip(
-                            icon: '🌊',
-                            label: '3 Day Flow',
-                            color: Color(0xFF0EA5E9),
+                            icon: '💪',
+                            label: '3 Day Habit',
+                            color: Color(0xFF14B8A6),
                           ),
                         if (state.currentStreak >= 7)
                           const _BadgeChip(
@@ -271,7 +271,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                                   ),
                             ),
                             Text(
-                              'of $dailyGoalMl ml',
+                              'of $dailyGoalMl units',
                               style: theme.textTheme.titleMedium,
                             ),
                           ],
@@ -336,13 +336,13 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   }
 
   String _getMotivationalText(int current, int goal) {
-    if (current == 0) return "Let's start with one glass. 💧";
+    if (current == 0) return "Let's get moving! 💪";
     final percent = current / goal;
-    if (percent >= 1.0) return "Goal reached! Great job. 🏆";
-    if (percent >= 0.75) return "Almost there, finish strong!";
-    if (percent >= 0.5) return "Halfway hydrated, keep it up!";
-    if (percent >= 0.25) return "Nice start, you're on your way.";
-    return "Every sip counts! 💧";
+    if (percent >= 1.0) return "Workout goal reached! Great job. 🏆";
+    if (percent >= 0.75) return "Almost there, finish strong! 🔥";
+    if (percent >= 0.5) return "Halfway there, keep it up! 💪";
+    if (percent >= 0.25) return "Nice start, you're on your way! 🔥";
+    return "Every rep counts! 💪";
   }
 }
 
@@ -354,20 +354,20 @@ class _DropletMascot extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    String emoji = '💧';
+    String emoji = '💪';
     String face = '•  •';
 
     if (progress == 0) {
       emoji = '😴';
       face = 'z Z';
     } else if (progress < 0.25) {
-      emoji = '🧊';
+      emoji = '👟';
       face = '•  •';
     } else if (progress < 0.75) {
-      emoji = '💧';
+      emoji = '💪';
       face = '•  •';
     } else if (progress < 1.0) {
-      emoji = '✨';
+      emoji = '🔥';
       face = 'ᵔ  ᵔ';
     } else {
       emoji = '🥳';
@@ -465,7 +465,7 @@ class _WaterAddButton extends StatelessWidget {
           Icon(Icons.add_rounded, size: 28, color: theme.colorScheme.primary),
           const SizedBox(height: 4),
           Text(
-            '$amount ml',
+            '$amount units',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],

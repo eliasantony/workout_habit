@@ -112,7 +112,7 @@ class _FloatingBottomBar extends StatelessWidget {
               Expanded(
                 child: Center(
                   child: _BottomBarItem(
-                    icon: Icons.water_drop_rounded,
+                    icon: Icons.fitness_center_rounded,
                     label: 'Home',
                     isSelected: currentIndex == 0,
                     onTap: () => onTap(0),

@@ -33,7 +33,7 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       title: Text(
-        _isCustomMode ? 'Custom Amount' : 'Add Water',
+        _isCustomMode ? 'Custom Amount' : 'Log Workout',
         textAlign: TextAlign.center,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
@@ -45,7 +45,7 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('How much did you drink?'),
+                    const Text('How many units did you log?'),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _textController,
@@ -57,8 +57,8 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       ),
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
-                        hintText: '250',
-                        suffixText: 'ml',
+                        hintText: '10',
+                        suffixText: 'units',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -76,16 +76,16 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       children: [
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.local_drink_rounded,
-                            label: '100 ml',
-                            onTap: () => widget.onAdd(100),
+                            icon: Icons.fitness_center_rounded,
+                            label: '5 units',
+                            onTap: () => widget.onAdd(5),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.water_drop_rounded,
-                            label: '${widget.quickAddSmall} ml',
+                            icon: Icons.directions_run_rounded,
+                            label: '${widget.quickAddSmall} units',
                             onTap: () => widget.onAdd(widget.quickAddSmall),
                           ),
                         ),
@@ -96,17 +96,17 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       children: [
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.water_drop_outlined,
-                            label: '${widget.quickAddLarge} ml',
+                            icon: Icons.timer_rounded,
+                            label: '${widget.quickAddLarge} units',
                             onTap: () => widget.onAdd(widget.quickAddLarge),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.liquor_rounded,
-                            label: '1 Liter',
-                            onTap: () => widget.onAdd(1000),
+                            icon: Icons.accessibility_new_rounded,
+                            label: '50 units',
+                            onTap: () => widget.onAdd(50),
                           ),
                         ),
                       ],

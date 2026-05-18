@@ -16,11 +16,11 @@ class NotificationService {
   bool get isInitialized => _initialized;
 
   static const List<String> _motivationalMessages = [
-    "Time for water 💧",
-    "Small sip, big win.",
-    "Hydration check: drink a glass of water.",
-    "Keep your streak going, grab some water!",
-    "Your body will thank you. Drink up!",
+    "Time to work out! 🏋️‍♂️",
+    "Small effort, big win.",
+    "Workout check: complete a set of exercises.",
+    "Keep your streak going, crush a workout!",
+    "Your body will thank you. Get moving!",
   ];
 
   static const String actionIdSmall = 'add_small';
@@ -201,14 +201,14 @@ class NotificationService {
 
             await _flutterLocalNotificationsPlugin.zonedSchedule(
               id: id,
-              title: 'Hydro Habit',
+              title: 'Workout Habit',
               body: message,
               scheduledDate: scheduleTime,
               notificationDetails: NotificationDetails(
                 android: AndroidNotificationDetails(
                   'reminders_channel_${state.notificationSound}',
-                  'Hydration Reminders',
-                  channelDescription: 'Reminders to drink water',
+                  'Workout Reminders',
+                  channelDescription: 'Reminders to work out',
                   importance: Importance.high,
                   priority: Priority.high,
                   sound: RawResourceAndroidNotificationSound(
@@ -218,12 +218,12 @@ class NotificationService {
                   actions: <AndroidNotificationAction>[
                     AndroidNotificationAction(
                       actionIdSmall,
-                      'Add ${state.quickAddSmall}ml',
+                      'Log ${state.quickAddSmall} units',
                       showsUserInterface: false,
                     ),
                     AndroidNotificationAction(
                       actionIdLarge,
-                      'Add ${state.quickAddLarge}ml',
+                      'Log ${state.quickAddLarge} units',
                       showsUserInterface: false,
                     ),
                   ],
@@ -300,15 +300,16 @@ class NotificationService {
         if (!shouldSkip) {
           await _flutterLocalNotificationsPlugin.zonedSchedule(
             id: startEveningCheckId + dayOffset,
-            title: 'Daily Goal Check 💧',
+            title: 'Daily Goal Check 💪',
             body:
-                'You haven\'t reached your goal yet! Grab a glass of water to finish strong.',
+                'You haven\'t reached your workout target yet! Do some exercises to finish strong.',
             scheduledDate: scheduleTime,
             notificationDetails: NotificationDetails(
               android: AndroidNotificationDetails(
                 'goal_check_channel_${state.notificationSound}',
                 'Goal Check',
-                channelDescription: 'Evening reminders if goal is not met',
+                channelDescription:
+                    'Evening reminders if workout target is not met',
                 importance: Importance.high,
                 priority: Priority.high,
                 sound: RawResourceAndroidNotificationSound(
@@ -318,12 +319,12 @@ class NotificationService {
                 actions: <AndroidNotificationAction>[
                   AndroidNotificationAction(
                     actionIdSmall,
-                    'Add ${state.quickAddSmall}ml',
+                    'Log ${state.quickAddSmall} units',
                     showsUserInterface: false,
                   ),
                   AndroidNotificationAction(
                     actionIdLarge,
-                    'Add ${state.quickAddLarge}ml',
+                    'Log ${state.quickAddLarge} units',
                     showsUserInterface: false,
                   ),
                 ],
@@ -360,12 +361,12 @@ class NotificationService {
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
           actionIdSmall,
-          'Add Small',
+          'Log Small',
           showsUserInterface: false,
         ),
         AndroidNotificationAction(
           actionIdLarge,
-          'Add Large',
+          'Log Large',
           showsUserInterface: false,
         ),
       ],
@@ -378,7 +379,7 @@ class NotificationService {
 
     await _flutterLocalNotificationsPlugin.show(
       id: 999,
-      title: 'Test Notification 💧',
+      title: 'Test Notification 💪',
       body: 'This is a test to verify notifications and actions work!',
       notificationDetails: notificationDetails,
     );
@@ -387,8 +388,8 @@ class NotificationService {
   Future<void> showBackgroundSuccess(int amount, {String? message}) async {
     await _flutterLocalNotificationsPlugin.show(
       id: 888,
-      title: 'Water Added! 💧',
-      body: message ?? 'Successfully added $amount ml.',
+      title: 'Workout Logged! 💪',
+      body: message ?? 'Successfully logged $amount units.',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'hydro_habit_silent',
