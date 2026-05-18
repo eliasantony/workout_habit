@@ -27,8 +27,8 @@ This document outlines the phases of the **Workout Habit** migration and develop
 - [x] Implement `ExerciseLog` class with robust `fromJson` defensive parsing.
 - [x] Implement `DailyWorkoutHistory` model with list of logs.
 - [x] Define `WorkoutState` matching the fresh defaults (50 target, push-ups preferred).
-- [ ] Write `WorkoutStorage` to wrap `SharedPreferences` with generalized unit keys.
-- [ ] Implement `clearLegacyKeys()` on storage load to safely delete older Hydro Habit keys.
+- [x] Write `WorkoutStorage` to wrap `SharedPreferences` with generalized unit keys.
+- [x] Implement `clearLegacyKeys()` on storage load to safely delete older Hydro Habit keys.
 
 ---
 

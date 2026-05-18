@@ -26,11 +26,11 @@ void main() {
       findsAtLeast(1),
     ); // Title in AppBar and possibly elsewhere
     expect(find.text('0'), findsOneWidget);
-    expect(find.text('of 2500 ml'), findsOneWidget);
+    expect(find.text('of 50 ml'), findsOneWidget);
     expect(find.text("Let's start with one glass. 💧"), findsOneWidget);
 
     // Verify the add buttons are present.
-    expect(find.text('250 ml'), findsOneWidget);
-    expect(find.text('500 ml'), findsOneWidget);
+    expect(find.text('5 ml'), findsOneWidget);
+    expect(find.text('10 ml'), findsOneWidget);
   });
 }

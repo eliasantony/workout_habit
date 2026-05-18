@@ -22,6 +22,8 @@ class WorkoutController extends ChangeNotifier {
   WorkoutState get state => _state;
 
   Future<void> _init() async {
+    await _storage.initializeForWorkoutHabit();
+
     final currentWater = _storage.getCurrentWater();
     final dailyGoal = _storage.getDailyGoal();
     final lastTrackedDate = _storage.getLastTrackedDate();

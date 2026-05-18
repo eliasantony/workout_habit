@@ -5,18 +5,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workout_habit/features/workout/workout_models.dart';
 
 class WorkoutStorage {
-  static const String _keyCurrentWater = 'current_water_ml';
-  static const String _keyDailyGoal = 'daily_goal_ml';
-  static const String _keyLastTrackedDate = 'last_tracked_date';
+  // New Workout-oriented keys
+  static const String _keyCurrentWorkoutUnits = 'current_workout_units';
+  static const String _keyDailyWorkoutTargetUnits =
+      'daily_workout_target_units';
+  static const String _keyPreferredExercise = 'preferred_exercise';
+  static const String _keySelectedExercise = 'selected_exercise';
+  static const String _keyQuickAddSmallUnits = 'quick_add_small_units';
+  static const String _keyQuickAddLargeUnits = 'quick_add_large_units';
+  static const String _keyWorkoutHistory = 'workout_history';
+  static const String _keyStreak = 'streak';
+  static const String _keyLastLoggedDate = 'last_logged_date';
+
+  // Settings & others (retaining some keys for seamless integration where needed)
   static const String _keyRemindersEnabled = 'reminders_enabled';
   static const String _keyReminderInterval = 'reminder_interval_mins';
   static const String _keyReminderStartTime = 'reminder_start_time';
   static const String _keyReminderEndTime = 'reminder_end_time';
-  static const String _keyCurrentStreak = 'current_streak';
   static const String _keyLastGoalMetDate = 'last_goal_met_date';
-  static const String _keyDailyHistory = 'daily_history';
-  static const String _keyQuickAddSmall = 'quick_add_small';
-  static const String _keyQuickAddLarge = 'quick_add_large';
   static const String _keyEveningCheckEnabled = 'evening_check_enabled';
   static const String _keyEveningCheckTime = 'evening_check_time';
   static const String _keyThemeMode = 'theme_mode';
@@ -30,49 +36,170 @@ class WorkoutStorage {
     await _prefs.reload();
   }
 
-  List<DailyHistory> getDailyHistory() {
-    final String? historyJson = _prefs.getString(_keyDailyHistory);
+  // Idempotent initialization
+  Future<void> initializeForWorkoutHabit() async {
+    await clearLegacyKeys();
+
+    if (!_prefs.containsKey(_keyCurrentWorkoutUnits)) {
+      await _prefs.setInt(_keyCurrentWorkoutUnits, 0);
+    }
+    if (!_prefs.containsKey(_keyDailyWorkoutTargetUnits)) {
+      await _prefs.setInt(_keyDailyWorkoutTargetUnits, 50);
+    }
+    if (!_prefs.containsKey(_keyPreferredExercise)) {
+      await _prefs.setString(_keyPreferredExercise, 'push_ups');
+    }
+    if (!_prefs.containsKey(_keySelectedExercise)) {
+      await _prefs.setString(_keySelectedExercise, 'push_ups');
+    }
+    if (!_prefs.containsKey(_keyQuickAddSmallUnits)) {
+      await _prefs.setInt(_keyQuickAddSmallUnits, 5);
+    }
+    if (!_prefs.containsKey(_keyQuickAddLargeUnits)) {
+      await _prefs.setInt(_keyQuickAddLargeUnits, 10);
+    }
+    if (!_prefs.containsKey(_keyStreak)) {
+      await _prefs.setInt(_keyStreak, 0);
+    }
+  }
+
+  // Safely wipe old Hydro Habit keys
+  Future<void> clearLegacyKeys() async {
+    final Set<String> legacyKeys = {
+      'current_water_ml',
+      'daily_goal_ml',
+      'last_tracked_date',
+      'current_streak',
+      'daily_history',
+      'quick_add_small',
+      'quick_add_large',
+    };
+
+    for (final String key in legacyKeys) {
+      if (_prefs.containsKey(key)) {
+        await _prefs.remove(key);
+      }
+    }
+  }
+
+  // --- NEW WORKOUT ORIENTED API ---
+
+  int getCurrentWorkoutUnits() {
+    return _prefs.getInt(_keyCurrentWorkoutUnits) ?? 0;
+  }
+
+  Future<void> saveCurrentWorkoutUnits(int units) async {
+    if (units < 0) units = 0;
+    await _prefs.setInt(_keyCurrentWorkoutUnits, units);
+  }
+
+  int getDailyWorkoutTargetUnits() {
+    return _prefs.getInt(_keyDailyWorkoutTargetUnits) ?? 50;
+  }
+
+  Future<void> saveDailyWorkoutTargetUnits(int units) async {
+    if (units < 0) units = 0;
+    await _prefs.setInt(_keyDailyWorkoutTargetUnits, units);
+  }
+
+  DateTime getLastLoggedDate() {
+    final timestamp = _prefs.getInt(_keyLastLoggedDate);
+    if (timestamp != null) {
+      return DateTime.fromMillisecondsSinceEpoch(timestamp);
+    }
+    return DateTime.now();
+  }
+
+  Future<void> saveLastLoggedDate(DateTime date) async {
+    await _prefs.setInt(_keyLastLoggedDate, date.millisecondsSinceEpoch);
+  }
+
+  int getStreak() {
+    return _prefs.getInt(_keyStreak) ?? 0;
+  }
+
+  Future<void> saveStreak(int streak) async {
+    if (streak < 0) streak = 0;
+    await _prefs.setInt(_keyStreak, streak);
+  }
+
+  List<DailyWorkoutHistory> getWorkoutHistory() {
+    final String? historyJson = _prefs.getString(_keyWorkoutHistory);
     if (historyJson == null) return [];
     try {
       final List<dynamic> decoded = jsonDecode(historyJson);
-      return decoded.map((item) => DailyHistory.fromJson(item)).toList();
+      return decoded.map((item) => DailyWorkoutHistory.fromJson(item)).toList();
     } catch (e) {
       return [];
     }
   }
 
-  Future<void> saveDailyHistory(List<DailyHistory> history) async {
+  Future<void> saveWorkoutHistory(List<DailyWorkoutHistory> history) async {
     final String encoded = jsonEncode(history.map((e) => e.toJson()).toList());
-    await _prefs.setString(_keyDailyHistory, encoded);
+    await _prefs.setString(_keyWorkoutHistory, encoded);
   }
 
-  int getCurrentWater() {
-    return _prefs.getInt(_keyCurrentWater) ?? 0;
+  int getQuickAddSmallUnits() {
+    return _prefs.getInt(_keyQuickAddSmallUnits) ?? 5;
   }
 
-  Future<void> saveCurrentWater(int ml) async {
-    await _prefs.setInt(_keyCurrentWater, ml);
+  Future<void> saveQuickAddSmallUnits(int units) async {
+    if (units < 0) units = 0;
+    await _prefs.setInt(_keyQuickAddSmallUnits, units);
   }
 
-  int getDailyGoal() {
-    return _prefs.getInt(_keyDailyGoal) ?? 2500;
+  int getQuickAddLargeUnits() {
+    return _prefs.getInt(_keyQuickAddLargeUnits) ?? 10;
   }
 
-  Future<void> saveDailyGoal(int ml) async {
-    await _prefs.setInt(_keyDailyGoal, ml);
+  Future<void> saveQuickAddLargeUnits(int units) async {
+    if (units < 0) units = 0;
+    await _prefs.setInt(_keyQuickAddLargeUnits, units);
   }
 
-  DateTime getLastTrackedDate() {
-    final timestamp = _prefs.getInt(_keyLastTrackedDate);
-    if (timestamp != null) {
-      return DateTime.fromMillisecondsSinceEpoch(timestamp);
-    }
-    return DateTime.now(); // Default to now if not set
+  ExerciseType getPreferredExercise() {
+    final id = _prefs.getString(_keyPreferredExercise) ?? 'push_ups';
+    return ExerciseType.fromId(id);
   }
 
-  Future<void> saveLastTrackedDate(DateTime date) async {
-    await _prefs.setInt(_keyLastTrackedDate, date.millisecondsSinceEpoch);
+  Future<void> savePreferredExercise(ExerciseType exercise) async {
+    await _prefs.setString(_keyPreferredExercise, exercise.id);
   }
+
+  ExerciseType getSelectedExercise() {
+    final id = _prefs.getString(_keySelectedExercise) ?? 'push_ups';
+    return ExerciseType.fromId(id);
+  }
+
+  Future<void> saveSelectedExercise(ExerciseType exercise) async {
+    await _prefs.setString(_keySelectedExercise, exercise.id);
+  }
+
+  // --- TEMPORARY COMPATIBILITY WRAPPERS FOR CONTROLLER COMPILATION ---
+
+  int getCurrentWater() => getCurrentWorkoutUnits();
+  Future<void> saveCurrentWater(int ml) => saveCurrentWorkoutUnits(ml);
+
+  int getDailyGoal() => getDailyWorkoutTargetUnits();
+  Future<void> saveDailyGoal(int ml) => saveDailyWorkoutTargetUnits(ml);
+
+  DateTime getLastTrackedDate() => getLastLoggedDate();
+  Future<void> saveLastTrackedDate(DateTime date) => saveLastLoggedDate(date);
+
+  int getCurrentStreak() => getStreak();
+  Future<void> saveCurrentStreak(int streak) => saveStreak(streak);
+
+  List<DailyHistory> getDailyHistory() => getWorkoutHistory();
+  Future<void> saveDailyHistory(List<DailyHistory> history) =>
+      saveWorkoutHistory(history);
+
+  int getQuickAddSmall() => getQuickAddSmallUnits();
+  Future<void> saveQuickAddSmall(int ml) => saveQuickAddSmallUnits(ml);
+
+  int getQuickAddLarge() => getQuickAddLargeUnits();
+  Future<void> saveQuickAddLarge(int ml) => saveQuickAddLargeUnits(ml);
+
+  // --- OTHER PERSISTENT SETTINGS ---
 
   bool getRemindersEnabled() {
     return _prefs.getBool(_keyRemindersEnabled) ?? false;
@@ -106,14 +233,6 @@ class WorkoutStorage {
     await _prefs.setString(_keyReminderEndTime, time);
   }
 
-  int getCurrentStreak() {
-    return _prefs.getInt(_keyCurrentStreak) ?? 0;
-  }
-
-  Future<void> saveCurrentStreak(int streak) async {
-    await _prefs.setInt(_keyCurrentStreak, streak);
-  }
-
   DateTime? getLastGoalMetDate() {
     final ms = _prefs.getInt(_keyLastGoalMetDate);
     if (ms == null) return null;
@@ -122,22 +241,6 @@ class WorkoutStorage {
 
   Future<void> saveLastGoalMetDate(DateTime date) async {
     await _prefs.setInt(_keyLastGoalMetDate, date.millisecondsSinceEpoch);
-  }
-
-  int getQuickAddSmall() {
-    return _prefs.getInt(_keyQuickAddSmall) ?? 250;
-  }
-
-  Future<void> saveQuickAddSmall(int ml) async {
-    await _prefs.setInt(_keyQuickAddSmall, ml);
-  }
-
-  int getQuickAddLarge() {
-    return _prefs.getInt(_keyQuickAddLarge) ?? 500;
-  }
-
-  Future<void> saveQuickAddLarge(int ml) async {
-    await _prefs.setInt(_keyQuickAddLarge, ml);
   }
 
   bool getEveningCheckEnabled() {
@@ -157,7 +260,7 @@ class WorkoutStorage {
   }
 
   ThemeMode getThemeMode() {
-    final index = _prefs.getInt(_keyThemeMode) ?? 0; // Default to system
+    final index = _prefs.getInt(_keyThemeMode) ?? 0;
     return ThemeMode.values[index];
   }
 
