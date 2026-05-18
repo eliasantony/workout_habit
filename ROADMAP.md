@@ -78,7 +78,7 @@ This document outlines the phases of the **Workout Habit** migration and develop
 ## Phase 6: Android Native Widget Sync [In Progress]
 - [x] Update native Android layouts (`widget_layout_square.xml`, `widget_layout_bar.xml`) to display "Workout Habit" and support dynamic labels.
 - [x] Update native widget providers to bind and display `todayUnits`, `goalUnits`, and `preferredExerciseLabel` (e.g., "+5 Push-ups").
-- [ ] Update `WidgetActionReceiver.kt` key mappings and implement logging the Preferred Exercise on interactive widget button clicks.
+- [x] Update `WidgetActionReceiver.kt` key mappings and implement logging the Preferred Exercise on interactive widget button clicks.
 - [ ] Verify interactive home widgets sync immediately with the app before renaming native Kotlin files.
 
 ---
