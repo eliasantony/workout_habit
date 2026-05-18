@@ -26,11 +26,14 @@ void main() {
       findsAtLeast(1),
     ); // Title in AppBar and possibly elsewhere
     expect(find.text('0'), findsOneWidget);
-    expect(find.text('of 50 units'), findsOneWidget);
-    expect(find.text("Let's get moving! 💪"), findsOneWidget);
+    expect(find.text('of 50 reps'), findsOneWidget);
+    expect(
+      find.text("Let's get moving! 💪 Select an exercise below to start."),
+      findsOneWidget,
+    );
 
     // Verify the add buttons are present.
-    expect(find.text('5 units'), findsOneWidget);
-    expect(find.text('10 units'), findsOneWidget);
+    expect(find.text('+5 reps'), findsOneWidget);
+    expect(find.text('+10 reps'), findsOneWidget);
   });
 }

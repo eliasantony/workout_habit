@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
 
 class LogExerciseDialog extends StatefulWidget {
+  final ExerciseType exercise;
   final int quickAddSmall;
   final int quickAddLarge;
   final Function(int) onAdd;
 
   const LogExerciseDialog({
     super.key,
+    required this.exercise,
     required this.quickAddSmall,
     required this.quickAddLarge,
     required this.onAdd,
@@ -33,7 +36,9 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       title: Text(
-        _isCustomMode ? 'Custom Amount' : 'Log Workout',
+        _isCustomMode
+            ? 'Custom ${widget.exercise.label}'
+            : 'Log ${widget.exercise.label}',
         textAlign: TextAlign.center,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
@@ -45,7 +50,7 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('How many units did you log?'),
+                    Text('How many ${widget.exercise.unit} did you log?'),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _textController,
@@ -58,7 +63,7 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         hintText: '10',
-                        suffixText: 'units',
+                        suffixText: widget.exercise.unit,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -76,16 +81,17 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       children: [
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.fitness_center_rounded,
-                            label: '5 units',
+                            icon: widget.exercise.icon,
+                            label: '5 ${widget.exercise.unit}',
                             onTap: () => widget.onAdd(5),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.directions_run_rounded,
-                            label: '${widget.quickAddSmall} units',
+                            icon: widget.exercise.icon,
+                            label:
+                                '${widget.quickAddSmall} ${widget.exercise.unit}',
                             onTap: () => widget.onAdd(widget.quickAddSmall),
                           ),
                         ),
@@ -96,16 +102,17 @@ class _LogExerciseDialogState extends State<LogExerciseDialog> {
                       children: [
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.timer_rounded,
-                            label: '${widget.quickAddLarge} units',
+                            icon: widget.exercise.icon,
+                            label:
+                                '${widget.quickAddLarge} ${widget.exercise.unit}',
                             onTap: () => widget.onAdd(widget.quickAddLarge),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _AddOption(
-                            icon: Icons.accessibility_new_rounded,
-                            label: '50 units',
+                            icon: widget.exercise.icon,
+                            label: '50 ${widget.exercise.unit}',
                             onTap: () => widget.onAdd(50),
                           ),
                         ),

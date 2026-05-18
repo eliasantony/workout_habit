@@ -31,22 +31,27 @@ class _MainScreenState extends State<MainScreen> {
     showDialog(
       context: context,
       builder: (context) => LogExerciseDialog(
+        exercise: widget.controller.state.selectedExercise,
         quickAddSmall: widget.controller.state.quickAddSmall,
         quickAddLarge: widget.controller.state.quickAddLarge,
         onAdd: (amount) async {
+          if (amount <= 0) return;
           final oldProgress =
-              widget.controller.state.currentWaterMl /
-              widget.controller.state.dailyGoalMl;
+              widget.controller.state.currentWorkoutUnits /
+              widget.controller.state.dailyWorkoutTargetUnits;
 
           final navigator = Navigator.of(context);
 
-          await widget.controller.addWater(amount);
+          await widget.controller.logExercise(
+            exercise: widget.controller.state.selectedExercise,
+            amount: amount,
+          );
 
           if (!mounted) return;
 
           final newProgress =
-              widget.controller.state.currentWaterMl /
-              widget.controller.state.dailyGoalMl;
+              widget.controller.state.currentWorkoutUnits /
+              widget.controller.state.dailyWorkoutTargetUnits;
           if (oldProgress < 1.0 && newProgress >= 1.0) {
             if (!context.mounted) return;
             WorkoutScreen.showCelebrationDialog(context, widget.controller);
