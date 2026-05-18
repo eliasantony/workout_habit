@@ -1,38 +1,160 @@
 import 'package:flutter/material.dart';
 
-class DailyHistory {
-  final String date; // yyyy-MM-dd
-  final int consumedMl;
-  final int goalMl;
-  final bool goalReached;
-  final DateTime? completedAt;
+enum ExerciseType {
+  pushUps('push_ups', 'Push-ups', 'reps', Icons.fitness_center_rounded),
+  sitUps('sit_ups', 'Sit-ups', 'reps', Icons.accessibility_new_rounded),
+  squats('squats', 'Squats', 'reps', Icons.directions_run_rounded),
+  plank('plank', 'Plank', 'sec', Icons.timer_rounded),
+  custom('custom', 'Custom', 'units', Icons.star_rounded);
 
-  const DailyHistory({
-    required this.date,
-    required this.consumedMl,
-    required this.goalMl,
-    required this.goalReached,
-    this.completedAt,
+  final String id;
+  final String label;
+  final String unit;
+  final IconData icon;
+
+  const ExerciseType(this.id, this.label, this.unit, this.icon);
+
+  static ExerciseType fromId(String id) {
+    return ExerciseType.values.firstWhere(
+      (e) => e.id == id,
+      orElse: () => ExerciseType.custom,
+    );
+  }
+}
+
+class ExerciseLog {
+  final String id;
+  final String exerciseId; // push_ups, sit_ups, squats, plank, custom
+  final int amount; // units (reps or seconds)
+  final DateTime timestamp;
+  final String? customName; // Used if exerciseId is 'custom'
+
+  const ExerciseLog({
+    required this.id,
+    required this.exerciseId,
+    required this.amount,
+    required this.timestamp,
+    this.customName,
   });
 
   Map<String, dynamic> toJson() => {
-    'date': date,
-    'consumedMl': consumedMl,
-    'goalMl': goalMl,
-    'goalReached': goalReached,
-    'completedAt': completedAt?.millisecondsSinceEpoch,
+    'id': id,
+    'exerciseId': exerciseId,
+    'amount': amount,
+    'timestamp': timestamp.millisecondsSinceEpoch,
+    'customName': customName,
   };
 
-  factory DailyHistory.fromJson(Map<String, dynamic> json) => DailyHistory(
-    date: json['date'],
-    consumedMl: json['consumedMl'],
-    goalMl: json['goalMl'],
-    goalReached: json['goalReached'],
-    completedAt: json['completedAt'] != null
-        ? DateTime.fromMillisecondsSinceEpoch(json['completedAt'])
-        : null,
-  );
+  factory ExerciseLog.fromJson(Map<String, dynamic> json) {
+    final rawAmount = json['amount'];
+    int parsedAmount = 0;
+    if (rawAmount is num) {
+      parsedAmount = rawAmount.toInt();
+    }
+    // Amount should never be negative
+    if (parsedAmount < 0) {
+      parsedAmount = 0;
+    }
+
+    DateTime parsedTimestamp;
+    try {
+      final rawTimestamp = json['timestamp'];
+      if (rawTimestamp is num) {
+        parsedTimestamp = DateTime.fromMillisecondsSinceEpoch(
+          rawTimestamp.toInt(),
+        );
+      } else if (rawTimestamp is String) {
+        parsedTimestamp = DateTime.parse(rawTimestamp);
+      } else {
+        parsedTimestamp = DateTime.now();
+      }
+    } catch (_) {
+      parsedTimestamp = DateTime.now();
+    }
+
+    return ExerciseLog(
+      id: json['id']?.toString() ?? '',
+      exerciseId: json['exerciseId']?.toString() ?? 'push_ups',
+      amount: parsedAmount,
+      timestamp: parsedTimestamp,
+      customName: json['customName']?.toString(),
+    );
+  }
 }
+
+class DailyWorkoutHistory {
+  final String date; // yyyy-MM-dd
+  final int completedUnits; // Total units completed today
+  final int targetUnits; // Daily target units
+  final bool goalReached;
+  final List<ExerciseLog> logs;
+  final DateTime? completedAt; // compatibility field
+
+  const DailyWorkoutHistory({
+    required this.date,
+    int? completedUnits,
+    int? targetUnits,
+    required this.goalReached,
+    this.logs = const [],
+    this.completedAt,
+    // compatibility support
+    int? consumedMl,
+    int? goalMl,
+  }) : completedUnits = completedUnits ?? consumedMl ?? 0,
+       targetUnits = targetUnits ?? goalMl ?? 50;
+
+  int get consumedMl => completedUnits;
+  int get goalMl => targetUnits;
+
+  Map<String, dynamic> toJson() => {
+    'date': date,
+    'completedUnits': completedUnits,
+    'targetUnits': targetUnits,
+    'goalReached': goalReached,
+    'logs': logs.map((l) => l.toJson()).toList(),
+    'completedAt': completedAt?.millisecondsSinceEpoch,
+    // compatibility support
+    'consumedMl': consumedMl,
+    'goalMl': goalMl,
+  };
+
+  factory DailyWorkoutHistory.fromJson(Map<String, dynamic> json) {
+    final rawLogs = json['logs'] as List?;
+    final parsedLogs = rawLogs != null
+        ? rawLogs
+              .map((l) => ExerciseLog.fromJson(l as Map<String, dynamic>))
+              .toList()
+        : <ExerciseLog>[];
+
+    final completed = json['completedUnits'] ?? json['consumedMl'] ?? 0;
+    final target = json['targetUnits'] ?? json['goalMl'] ?? 50;
+    final reached = json['goalReached'] ?? false;
+
+    DateTime? completedTime;
+    if (json['completedAt'] != null) {
+      try {
+        completedTime = DateTime.fromMillisecondsSinceEpoch(
+          json['completedAt'],
+        );
+      } catch (_) {
+        // Defensive
+      }
+    }
+
+    return DailyWorkoutHistory(
+      date: json['date'] ?? '',
+      completedUnits: completed is num ? completed.toInt() : 0,
+      targetUnits: target is num
+          ? (target.toInt() >= 0 ? target.toInt() : 50)
+          : 50,
+      goalReached: reached is bool ? reached : false,
+      logs: parsedLogs,
+      completedAt: completedTime,
+    );
+  }
+}
+
+typedef DailyHistory = DailyWorkoutHistory;
 
 class WidgetData {
   final int todayMl;
@@ -53,6 +175,9 @@ class WidgetData {
     required this.quickAddLarge,
   });
 
+  int get todayUnits => todayMl;
+  int get goalUnits => goalMl;
+
   Map<String, dynamic> toJson() => {
     'todayMl': todayMl,
     'goalMl': goalMl,
@@ -68,7 +193,7 @@ class WorkoutState {
   final int currentWaterMl;
   final int dailyGoalMl;
   final DateTime lastTrackedDate;
-  final List<DailyHistory> history;
+  final List<DailyWorkoutHistory> history;
 
   // Gamification
   final int currentStreak;
@@ -86,6 +211,10 @@ class WorkoutState {
   final ThemeMode themeMode;
   final String notificationSound;
 
+  // New fields
+  final ExerciseType preferredExercise;
+  final ExerciseType selectedExercise;
+
   const WorkoutState({
     required this.currentWaterMl,
     required this.dailyGoalMl,
@@ -99,17 +228,22 @@ class WorkoutState {
     required this.reminderEndTime,
     this.eveningCheckEnabled = false,
     this.eveningCheckTime = '21:00',
-    this.quickAddSmall = 250,
-    this.quickAddLarge = 500,
-    this.themeMode = ThemeMode.system,
-    this.notificationSound = 'notification_sound',
+    required this.quickAddSmall,
+    required this.quickAddLarge,
+    required this.themeMode,
+    required this.notificationSound,
+    this.preferredExercise = ExerciseType.pushUps,
+    this.selectedExercise = ExerciseType.pushUps,
   });
+
+  int get todayUnits => currentWaterMl;
+  int get goalUnits => dailyGoalMl;
 
   WorkoutState copyWith({
     int? currentWaterMl,
     int? dailyGoalMl,
     DateTime? lastTrackedDate,
-    List<DailyHistory>? history,
+    List<DailyWorkoutHistory>? history,
     int? currentStreak,
     DateTime? lastGoalMetDate,
     bool? remindersEnabled,
@@ -122,6 +256,8 @@ class WorkoutState {
     int? quickAddLarge,
     ThemeMode? themeMode,
     String? notificationSound,
+    ExerciseType? preferredExercise,
+    ExerciseType? selectedExercise,
   }) {
     return WorkoutState(
       currentWaterMl: currentWaterMl ?? this.currentWaterMl,
@@ -140,6 +276,8 @@ class WorkoutState {
       quickAddLarge: quickAddLarge ?? this.quickAddLarge,
       themeMode: themeMode ?? this.themeMode,
       notificationSound: notificationSound ?? this.notificationSound,
+      preferredExercise: preferredExercise ?? this.preferredExercise,
+      selectedExercise: selectedExercise ?? this.selectedExercise,
     );
   }
 

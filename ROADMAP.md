@@ -23,10 +23,10 @@ This document outlines the phases of the **Workout Habit** migration and develop
 ---
 
 ## Phase 2: Workout Domain Model & Storage [Pending]
-- [ ] Implement `ExerciseType` enum (Push-ups, Sit-ups, Squats, Planks, Custom).
-- [ ] Implement `ExerciseLog` class with robust `fromJson` defensive parsing.
-- [ ] Implement `DailyWorkoutHistory` model with list of logs.
-- [ ] Define `WorkoutState` matching the fresh defaults (50 target, push-ups preferred).
+- [x] Implement `ExerciseType` enum (Push-ups, Sit-ups, Squats, Planks, Custom).
+- [x] Implement `ExerciseLog` class with robust `fromJson` defensive parsing.
+- [x] Implement `DailyWorkoutHistory` model with list of logs.
+- [x] Define `WorkoutState` matching the fresh defaults (50 target, push-ups preferred).
 - [ ] Write `WorkoutStorage` to wrap `SharedPreferences` with generalized unit keys.
 - [ ] Implement `clearLegacyKeys()` on storage load to safely delete older Hydro Habit keys.
 
