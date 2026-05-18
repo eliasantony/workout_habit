@@ -40,7 +40,10 @@ void callbackDispatcher() {
 void onNotificationActionBackground(NotificationResponse response) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (response.actionId == 'add_small' || response.actionId == 'add_large') {
+  if (response.actionId != null &&
+      (response.actionId == 'add_small' ||
+          response.actionId == 'add_large' ||
+          response.actionId!.startsWith('log_'))) {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload();
@@ -48,13 +51,31 @@ void onNotificationActionBackground(NotificationResponse response) async {
       final ns = NotificationService();
       await ns.init();
 
-      final amount = response.actionId == 'add_small'
-          ? storage.getQuickAddSmall()
-          : storage.getQuickAddLarge();
+      int? amount;
+      final actionId = response.actionId!;
+      if (actionId == 'add_small') {
+        amount = storage.getQuickAddSmall();
+      } else if (actionId == 'add_large') {
+        amount = storage.getQuickAddLarge();
+      } else {
+        final match = RegExp(r'log_(\d+)_units').firstMatch(actionId);
+        if (match != null) {
+          amount = int.tryParse(match.group(1) ?? '');
+        }
+      }
 
-      final controller = WorkoutController(storage, ns);
-      await controller.ready;
-      await controller.addWater(amount);
+      // Ensure invalid action amounts cannot log zero or negative units
+      if (amount != null && amount > 0) {
+        final controller = WorkoutController(storage, ns);
+        await controller.ready;
+        await controller.logPreferredExercise(amount);
+
+        final exercise = storage.getPreferredExercise();
+        await ns.showBackgroundSuccess(
+          amount,
+          message: 'Logged $amount ${exercise.unit} of ${exercise.label}.',
+        );
+      }
 
       if (response.id != null) {
         await ns.cancelNotification(response.id!);

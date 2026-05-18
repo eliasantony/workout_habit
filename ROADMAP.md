@@ -56,19 +56,19 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 4: Interactive UI Refactoring [Pending]
+## Phase 4: Interactive UI Refactoring [Completed]
 - [x] Adapt home screen (`workout_screen.dart`) to show workout progress.
 - [x] Replace water mascot with Workout Mascot reacting with motivational badges (💪, 🔥, 🏆).
 - [x] Implement beautiful horizontal selector for bodyweight exercises on the home screen.
 - [x] Configure quick log buttons (`+5`, `+10`, `+20`, and `Custom` on the Home Screen) to log the active exercise, showing dynamic labels (e.g. `+5 reps` or `+5 sec`).
 - [x] Refactor `LogExerciseDialog` to display custom repetitions grid inputs.
 - [x] Redesign `SettingsScreen` to manage daily target, preferred exercise, and theme modes.
-- [ ] Redesign `HistoryScreen` to display daily completed units against target, and build a bottom sheet list detailing individual exercises performed on selected days.
+- [x] Redesign `HistoryScreen` to display daily completed units against target, and build a bottom sheet list detailing individual exercises performed on selected days.
 
 ---
 
 ## Phase 5: Notifications Simplification [Pending]
-- [ ] Refactor `NotificationService` to support simplified notification schedules.
+- [x] Refactor `NotificationService` to support simplified notification schedules.
 - [ ] Implement Switch 1: Daily Workout Reminder (Toggle and Time Picker).
 - [ ] Implement Switch 2: Evening Target Check (Toggle and Time Picker).
 - [ ] Update notification text to gym motivation quotes and verify background actions log to the preferred exercise.

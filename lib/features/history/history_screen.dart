@@ -22,6 +22,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _focusedMonth = DateTime.now();
   }
 
+  String _determineLogsUnit(List<ExerciseLog> logs) {
+    if (logs.isEmpty) {
+      return 'units';
+    }
+    final units = logs
+        .map((log) => ExerciseType.fromId(log.exerciseId).unit)
+        .toSet();
+    if (units.length == 1) {
+      return units.first;
+    } else {
+      return 'units';
+    }
+  }
+
+  String _determineDayUnit(DailyWorkoutHistory historyEntry) {
+    return _determineLogsUnit(historyEntry.logs);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -48,9 +66,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             monthHistory.add(
               DailyHistory(
                 date: dateKey,
-                consumedMl: state.currentWaterMl,
-                goalMl: state.dailyGoalMl,
-                goalReached: state.currentWaterMl >= state.dailyGoalMl,
+                completedUnits: state.currentWorkoutUnits,
+                targetUnits: state.dailyWorkoutTargetUnits,
+                goalReached:
+                    state.currentWorkoutUnits >= state.dailyWorkoutTargetUnits,
+                logs: state.todayLogs,
               ),
             );
           }
@@ -177,7 +197,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget _buildCalendarGrid(dynamic state) {
+  Widget _buildCalendarGrid(WorkoutState state) {
     final theme = Theme.of(context);
     final daysInMonth = DateTime(
       _focusedMonth.year,
@@ -218,7 +238,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         final isFuture = date.isAfter(DateTime(now.year, now.month, now.day));
 
         // Find history for this day
-        DailyHistory? historyEntry;
+        DailyWorkoutHistory? historyEntry;
         try {
           historyEntry = state.history.firstWhere((h) => h.date == dateKey);
         } catch (_) {
@@ -229,11 +249,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
         bool reached = false;
         bool hasData = false;
         if (isToday) {
-          reached = state.currentWaterMl >= state.dailyGoalMl;
-          hasData = state.currentWaterMl > 0;
+          reached = state.currentWorkoutUnits >= state.dailyWorkoutTargetUnits;
+          hasData = state.currentWorkoutUnits > 0;
         } else if (historyEntry != null) {
           reached = historyEntry.goalReached;
-          hasData = true;
+          hasData = historyEntry.completedUnits > 0;
         }
 
         return InkWell(
@@ -273,80 +293,252 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _showDaySummary(
     DateTime date,
-    dynamic history,
+    DailyWorkoutHistory? historyEntry,
     bool isToday,
-    dynamic state,
+    WorkoutState state,
   ) {
-    int consumed = 0;
-    int goal = state.dailyGoalMl;
+    int completed = 0;
+    int target = state.dailyWorkoutTargetUnits;
+    List<ExerciseLog> logs = [];
+
     if (isToday) {
-      consumed = state.currentWaterMl;
-    } else if (history != null) {
-      consumed = history.consumedMl;
-      goal = history.goalMl;
+      completed = state.currentWorkoutUnits;
+      logs = state.todayLogs;
+    } else if (historyEntry != null) {
+      completed = historyEntry.completedUnits;
+      target = historyEntry.targetUnits;
+      logs = historyEntry.logs;
     }
+
+    final dayUnit = historyEntry != null
+        ? _determineDayUnit(historyEntry)
+        : (isToday
+              ? (logs.isEmpty ? 'units' : _determineLogsUnit(logs))
+              : 'units');
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Allow it to expand nicely
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
         final theme = Theme.of(context);
-        return Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                DateFormat('EEEE, MMMM d').format(date),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+        final progress = target > 0
+            ? (completed / target).clamp(0.0, 1.0)
+            : 0.0;
+        final isGoalReached = completed >= target;
+
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20,
               ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Logged units', style: TextStyle(fontSize: 16)),
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.4,
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
                   Text(
-                    '$consumed / $goal units',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    DateFormat('EEEE, MMMM d, yyyy').format(date),
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              LinearProgressIndicator(
-                value: (consumed / goal).clamp(0.0, 1.0),
-                minHeight: 12,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              const SizedBox(height: 24),
-              if (consumed >= goal)
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.check_circle, color: Colors.green),
-                    SizedBox(width: 8),
-                    Text(
-                      'Daily Workout Goal Reached!',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
+                  const SizedBox(height: 8),
+                  Text(
+                    isToday ? "Today's Activity" : "Past Workout Summary",
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Progress Card
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Workout Target',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '$completed / $target $dayUnit',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 12,
+                            borderRadius: BorderRadius.circular(6),
+                            backgroundColor:
+                                theme.colorScheme.surfaceContainerHighest,
+                          ),
+                          const SizedBox(height: 16),
+                          if (isGoalReached)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Goal Reached! Awesome workout! 💪🔥',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.info_outline_rounded,
+                                  color: Colors.orange,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    '${target - completed} $dayUnit remaining to hit target.',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
                       ),
                     ),
-                  ],
-                )
-              else
-                Text(
-                  '${goal - consumed} units remaining',
-                  style: theme.textTheme.bodySmall,
-                ),
-            ],
-          ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Logs Section
+                  Text(
+                    'Exercise Logs',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (logs.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 40.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.fitness_center_rounded,
+                              size: 48,
+                              color: theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.4),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No exercises logged for this day.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Consistency is key! Keep moving.',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: logs.length,
+                      itemBuilder: (context, index) {
+                        final log = logs[index];
+                        final type = ExerciseType.fromId(log.exerciseId);
+                        final name =
+                            log.exerciseId == 'custom' && log.customName != null
+                            ? log.customName!
+                            : type.label;
+                        final unit = type.unit;
+                        final formattedTime = DateFormat(
+                          'h:mm a',
+                        ).format(log.timestamp);
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 6.0),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor:
+                                  theme.colorScheme.primaryContainer,
+                              child: Icon(
+                                type.icon,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                            title: Text(
+                              name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(formattedTime),
+                            trailing: Text(
+                              '${log.amount} $unit',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
