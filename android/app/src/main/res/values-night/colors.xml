@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Widget Colors - Pixel Weather Inspired -->
+    <color name="widget_background">#171C26</color>
+    <color name="widget_background_stroke">#30363D</color>
+    <color name="widget_title">#7CB9FF</color>
+    <color name="widget_text_primary">#FFFFFF</color>
+    <color name="widget_text_secondary">#9DA3AE</color>
+    <color name="widget_progress_bg">#0B0E14</color>
+    <color name="widget_progress_fill">#7CB9FF</color>
+    <color name="widget_button_bg">#0B0E14</color>
+    <color name="widget_button_stroke">#30363D</color>
+    <color name="widget_button_ripple">#30363D</color>
+    <color name="widget_streak">#FB923C</color>
+</resources>
