@@ -54,9 +54,9 @@ void onNotificationActionBackground(NotificationResponse response) async {
       int? amount;
       final actionId = response.actionId!;
       if (actionId == 'add_small') {
-        amount = storage.getQuickAddSmall();
+        amount = storage.getQuickAddSmallUnits();
       } else if (actionId == 'add_large') {
-        amount = storage.getQuickAddLarge();
+        amount = storage.getQuickAddLargeUnits();
       } else {
         final match = RegExp(r'log_(\d+)_units').firstMatch(actionId);
         if (match != null) {
@@ -94,14 +94,26 @@ Future<void> backgroundCallback(Uri? uri) async {
 
   try {
     if (uri.scheme == 'home_widget' &&
-        (uri.host == 'add_water' || uri.path.contains('add_water'))) {
+        (uri.host == 'add_water' ||
+            uri.path.contains('add_water') ||
+            uri.host == 'log_exercise' ||
+            uri.path.contains('log_exercise') ||
+            uri.host == 'log_workout' ||
+            uri.path.contains('log_workout'))) {
       int? amount;
 
       if (uri.pathSegments.isNotEmpty) {
-        if (uri.host == 'add_water') {
+        if (uri.host == 'add_water' ||
+            uri.host == 'log_exercise' ||
+            uri.host == 'log_workout') {
           amount = int.tryParse(uri.pathSegments.first);
         } else {
-          final index = uri.pathSegments.indexOf('add_water');
+          final index = uri.pathSegments.indexWhere(
+            (segment) =>
+                segment == 'add_water' ||
+                segment == 'log_exercise' ||
+                segment == 'log_workout',
+          );
           if (index >= 0 && index < uri.pathSegments.length - 1) {
             amount = int.tryParse(uri.pathSegments[index + 1]);
           }
@@ -121,7 +133,7 @@ Future<void> backgroundCallback(Uri? uri) async {
 
         final controller = WorkoutController(storage, notificationService);
         await controller.ready;
-        await controller.addWater(amount);
+        await controller.logPreferredExercise(amount);
       }
     }
   } catch (e) {

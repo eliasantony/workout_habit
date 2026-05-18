@@ -83,15 +83,15 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 7: Theme & Branding Polish [Pending]
-- [ ] Implement the energetic and premium workout theme in `app_theme.dart` (vibrant Flame Coral / Sunset Orange + slate dark mode colors).
-- [ ] Replace all water-themed graphics/icons with workout-themed visual elements.
+## Phase 7: Theme & Branding Polish [Completed]
+- [x] Implement the energetic and premium workout theme in `app_theme.dart` (vibrant Flame Coral / Sunset Orange + slate dark mode colors).
+- [x] Replace all water-themed graphics/icons with workout-themed visual elements.
 
 ---
 
-## Phase 8: Tests & Verification [Pending]
-- [ ] Adapt `widget_test.dart` to test Workout Habit widget rendering.
-- [ ] Run `flutter format .` to format the migrated codebase.
-- [ ] Run `flutter analyze` to ensure 0 linting errors or warnings.
-- [ ] Run `flutter test` to ensure all tests pass.
-- [ ] Clean up dead hydration assets/resources and fully update the `README.md`.
+## Phase 8: Tests & Verification [Completed]
+- [x] Adapt `widget_test.dart` to test Workout Habit widget rendering.
+- [x] Run `flutter format .` to format the migrated codebase.
+- [x] Run `flutter analyze` to ensure 0 linting errors or warnings.
+- [x] Run `flutter test` to ensure all tests pass.
+- [x] Clean up dead hydration assets/resources and fully update the `README.md`.

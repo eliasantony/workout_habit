@@ -2,29 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF0EA5E9); // Clear water blue
-  static const Color primaryContainerColor = Color(0xFFE0F2FE); // Light blue
-  static const Color secondaryColor = Color(0xFF14B8A6); // Fresh aqua/mint
+  static const Color primaryColor = Color(
+    0xFFFF5A36,
+  ); // Vibrant Coral / Flame Orange for workouts
+  static const Color primaryContainerColor = Color(
+    0xFFFFEBE6,
+  ); // Very light salmon pink accent
+  static const Color secondaryColor = Color(
+    0xFF10B981,
+  ); // Energetic mint/teal for success and active selections
   static const Color accentColor = Color(0xFFF97316); // Warm orange for streaks
-  static const Color backgroundColor = Color(
-    0xFFF8FAFC,
-  ); // Very light blue/off-white
+  static const Color backgroundColor = Color(0xFFFAFBFD); // Sleek slate white
   static const Color surfaceColor = Colors.white;
   static const Color errorColor = Color(0xFFEF5350);
 
-  // Dark Mode Colors - Pixel Weather Inspired
+  // Dark Mode Colors - Premium Charcoal & Workout theme
   static const Color primaryColorDark = Color(
-    0xFF7CB9FF,
-  ); // Bright, vibrant blue
+    0xFFFF8C69,
+  ); // Energetic salmon coral
   static const Color backgroundColorDark = Color(
-    0xFF0B0E14,
-  ); // Deep charcoal/black
+    0xFF0F172A,
+  ); // Deep charcoal slate black
   static const Color surfaceColorDark = Color(
-    0xFF171C26,
-  ); // Slightly lighter surface
+    0xFF1E293B,
+  ); // Dark slate surface card
   static const Color secondaryTextColorDark = Color(
-    0xFF9DA3AE,
-  ); // Improved contrast gray
+    0xFF94A3B8,
+  ); // High-contrast medium slate gray
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -39,7 +43,7 @@ class AppTheme {
         onSecondary: Colors.white,
         surface: surfaceColor,
         error: errorColor,
-        outlineVariant: Colors.blue.withValues(alpha: 0.1),
+        outlineVariant: primaryColor.withValues(alpha: 0.1),
       ),
       scaffoldBackgroundColor: backgroundColor,
       appBarTheme: const AppBarTheme(
@@ -66,7 +70,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: Colors.blue.withValues(alpha: 0.05)),
+          side: BorderSide(color: primaryColor.withValues(alpha: 0.05)),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

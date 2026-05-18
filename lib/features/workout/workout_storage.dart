@@ -195,30 +195,6 @@ class WorkoutStorage {
     await _prefs.setString(_keyTodayLogs, encoded);
   }
 
-  // --- TEMPORARY COMPATIBILITY WRAPPERS FOR CONTROLLER COMPILATION ---
-
-  int getCurrentWater() => getCurrentWorkoutUnits();
-  Future<void> saveCurrentWater(int ml) => saveCurrentWorkoutUnits(ml);
-
-  int getDailyGoal() => getDailyWorkoutTargetUnits();
-  Future<void> saveDailyGoal(int ml) => saveDailyWorkoutTargetUnits(ml);
-
-  DateTime getLastTrackedDate() => getLastLoggedDate();
-  Future<void> saveLastTrackedDate(DateTime date) => saveLastLoggedDate(date);
-
-  int getCurrentStreak() => getStreak();
-  Future<void> saveCurrentStreak(int streak) => saveStreak(streak);
-
-  List<DailyHistory> getDailyHistory() => getWorkoutHistory();
-  Future<void> saveDailyHistory(List<DailyHistory> history) =>
-      saveWorkoutHistory(history);
-
-  int getQuickAddSmall() => getQuickAddSmallUnits();
-  Future<void> saveQuickAddSmall(int ml) => saveQuickAddSmallUnits(ml);
-
-  int getQuickAddLarge() => getQuickAddLargeUnits();
-  Future<void> saveQuickAddLarge(int ml) => saveQuickAddLargeUnits(ml);
-
   // --- OTHER PERSISTENT SETTINGS ---
 
   bool getRemindersEnabled() {

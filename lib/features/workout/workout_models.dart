@@ -157,8 +157,8 @@ class DailyWorkoutHistory {
 typedef DailyHistory = DailyWorkoutHistory;
 
 class WidgetData {
-  final int todayMl;
-  final int goalMl;
+  final int todayUnits;
+  final int goalUnits;
   final double progressPercent;
   final int streak;
   final bool goalReached;
@@ -166,8 +166,8 @@ class WidgetData {
   final int quickAddLarge;
 
   const WidgetData({
-    required this.todayMl,
-    required this.goalMl,
+    required this.todayUnits,
+    required this.goalUnits,
     required this.progressPercent,
     required this.streak,
     required this.goalReached,
@@ -175,12 +175,14 @@ class WidgetData {
     required this.quickAddLarge,
   });
 
-  int get todayUnits => todayMl;
-  int get goalUnits => goalMl;
+  int get todayMl => todayUnits;
+  int get goalMl => goalUnits;
 
   Map<String, dynamic> toJson() => {
-    'todayMl': todayMl,
-    'goalMl': goalMl,
+    'todayUnits': todayUnits,
+    'goalUnits': goalUnits,
+    'todayMl': todayUnits,
+    'goalMl': goalUnits,
     'progressPercent': progressPercent,
     'streak': streak,
     'goalReached': goalReached,
@@ -190,8 +192,8 @@ class WidgetData {
 }
 
 class WorkoutState {
-  final int currentWaterMl;
-  final int dailyGoalMl;
+  final int currentWorkoutUnits;
+  final int dailyWorkoutTargetUnits;
   final DateTime lastTrackedDate;
   final List<DailyWorkoutHistory> history;
   final List<ExerciseLog> todayLogs;
@@ -217,8 +219,8 @@ class WorkoutState {
   final ExerciseType selectedExercise;
 
   const WorkoutState({
-    required this.currentWaterMl,
-    required this.dailyGoalMl,
+    required this.currentWorkoutUnits,
+    required this.dailyWorkoutTargetUnits,
     required this.lastTrackedDate,
     required this.history,
     this.todayLogs = const [],
@@ -238,14 +240,12 @@ class WorkoutState {
     this.selectedExercise = ExerciseType.pushUps,
   });
 
-  int get todayUnits => currentWaterMl;
-  int get goalUnits => dailyGoalMl;
-  int get currentWorkoutUnits => currentWaterMl;
-  int get dailyWorkoutTargetUnits => dailyGoalMl;
+  int get todayUnits => currentWorkoutUnits;
+  int get goalUnits => dailyWorkoutTargetUnits;
 
   WorkoutState copyWith({
-    int? currentWaterMl,
-    int? dailyGoalMl,
+    int? currentWorkoutUnits,
+    int? dailyWorkoutTargetUnits,
     DateTime? lastTrackedDate,
     List<DailyWorkoutHistory>? history,
     List<ExerciseLog>? todayLogs,
@@ -265,8 +265,9 @@ class WorkoutState {
     ExerciseType? selectedExercise,
   }) {
     return WorkoutState(
-      currentWaterMl: currentWaterMl ?? this.currentWaterMl,
-      dailyGoalMl: dailyGoalMl ?? this.dailyGoalMl,
+      currentWorkoutUnits: currentWorkoutUnits ?? this.currentWorkoutUnits,
+      dailyWorkoutTargetUnits:
+          dailyWorkoutTargetUnits ?? this.dailyWorkoutTargetUnits,
       lastTrackedDate: lastTrackedDate ?? this.lastTrackedDate,
       history: history ?? this.history,
       todayLogs: todayLogs ?? this.todayLogs,
@@ -288,11 +289,14 @@ class WorkoutState {
   }
 
   WidgetData get widgetData => WidgetData(
-    todayMl: currentWaterMl,
-    goalMl: dailyGoalMl,
-    progressPercent: (currentWaterMl / dailyGoalMl).clamp(0.0, 1.0),
+    todayUnits: currentWorkoutUnits,
+    goalUnits: dailyWorkoutTargetUnits,
+    progressPercent: (currentWorkoutUnits / dailyWorkoutTargetUnits).clamp(
+      0.0,
+      1.0,
+    ),
     streak: currentStreak,
-    goalReached: currentWaterMl >= dailyGoalMl,
+    goalReached: currentWorkoutUnits >= dailyWorkoutTargetUnits,
     quickAddSmall: quickAddSmall,
     quickAddLarge: quickAddLarge,
   );

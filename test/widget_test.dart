@@ -35,5 +35,12 @@ void main() {
     // Verify the add buttons are present.
     expect(find.text('+5 reps'), findsOneWidget);
     expect(find.text('+10 reps'), findsOneWidget);
+
+    // Verify all workout selector options are displayed on the screen
+    expect(find.text('Push-ups'), findsOneWidget);
+    expect(find.text('Sit-ups'), findsOneWidget);
+    expect(find.text('Squats'), findsOneWidget);
+    expect(find.text('Plank'), findsOneWidget);
+    expect(find.text('Custom'), findsAtLeast(1));
   });
 }

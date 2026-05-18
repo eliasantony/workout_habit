@@ -50,8 +50,8 @@ class WorkoutController extends ChangeNotifier {
     final selectedExercise = _storage.getSelectedExercise();
 
     _state = WorkoutState(
-      currentWaterMl: currentWater,
-      dailyGoalMl: dailyGoal,
+      currentWorkoutUnits: currentWater,
+      dailyWorkoutTargetUnits: dailyGoal,
       lastTrackedDate: lastTrackedDate,
       history: history,
       todayLogs: todayLogs,
@@ -87,7 +87,8 @@ class WorkoutController extends ChangeNotifier {
     // Check if we should reschedule reminders
     // We only reschedule if forced (e.g. settings change)
     // or if the goal was just met (to cancel them)
-    if (forceReschedule || (_state.currentWaterMl >= _state.dailyGoalMl)) {
+    if (forceReschedule ||
+        (_state.currentWorkoutUnits >= _state.dailyWorkoutTargetUnits)) {
       _notificationService.scheduleReminders(_state);
     }
 
@@ -97,8 +98,8 @@ class WorkoutController extends ChangeNotifier {
   Future<void> _saveWidgetData() async {
     final data = _state.widgetData;
 
-    await HomeWidget.saveWidgetData('todayMl', data.todayMl);
-    await HomeWidget.saveWidgetData('goalMl', data.goalMl);
+    await HomeWidget.saveWidgetData('todayMl', data.todayUnits);
+    await HomeWidget.saveWidgetData('goalMl', data.goalUnits);
     await HomeWidget.saveWidgetData('progressPercent', data.progressPercent);
     await HomeWidget.saveWidgetData(
       'progress',
@@ -159,7 +160,7 @@ class WorkoutController extends ChangeNotifier {
     final newAmount = oldAmount + amount;
 
     _state = _state.copyWith(
-      currentWaterMl: newAmount,
+      currentWorkoutUnits: newAmount,
       todayLogs: updatedLogs,
       lastTrackedDate: DateTime.now(),
     );
@@ -200,7 +201,7 @@ class WorkoutController extends ChangeNotifier {
     final oldGoal = _state.dailyWorkoutTargetUnits;
     final currentAmount = _state.currentWorkoutUnits;
 
-    _state = _state.copyWith(dailyGoalMl: units);
+    _state = _state.copyWith(dailyWorkoutTargetUnits: units);
     await _storage.saveDailyWorkoutTargetUnits(units);
 
     // Check if goal was just met by lowering it
@@ -223,20 +224,7 @@ class WorkoutController extends ChangeNotifier {
     await _notifyAndSchedule(forceReschedule: true);
   }
 
-  // --- COMPATIBILITY DELEGATING METHODS ---
-
-  Future<void> addWater(int amount) async {
-    await logPreferredExercise(amount);
-  }
-
-  Future<void> updateDailyGoal(int newGoal) async {
-    await updateDailyWorkoutTargetUnits(newGoal);
-  }
-
-  Future<void> updateQuickAdd(int small, int large) async {
-    await updateQuickAddSmallUnits(small);
-    await updateQuickAddLargeUnits(large);
-  }
+  // Compatibility delegating methods removed as part of consistency cleanup
 
   // --- GENERAL MANAGEMENT METHODS ---
 
@@ -270,7 +258,7 @@ class WorkoutController extends ChangeNotifier {
         final updatedHistory = List<DailyHistory>.from(_state.history)
           ..add(previousDayHistory);
         _state = _state.copyWith(history: updatedHistory);
-        await _storage.saveDailyHistory(updatedHistory);
+        await _storage.saveWorkoutHistory(updatedHistory);
       }
 
       // Check if the streak is lost (if yesterday's goal was not met)
@@ -289,18 +277,18 @@ class WorkoutController extends ChangeNotifier {
         if (lastGoalMet.isBefore(yesterday)) {
           // Yesterday was missed, streak is lost
           _state = _state.copyWith(currentStreak: 0);
-          await _storage.saveCurrentStreak(0);
+          await _storage.saveStreak(0);
         }
       }
 
       // Reset today
       _state = _state.copyWith(
-        currentWaterMl: 0,
+        currentWorkoutUnits: 0,
         lastTrackedDate: now,
         todayLogs: [],
       );
-      await _storage.saveCurrentWater(0);
-      await _storage.saveLastTrackedDate(now);
+      await _storage.saveCurrentWorkoutUnits(0);
+      await _storage.saveLastLoggedDate(now);
       await _storage.saveTodayLogs([]);
       await _notifyAndSchedule(forceReschedule: true);
     }
@@ -344,14 +332,14 @@ class WorkoutController extends ChangeNotifier {
       }
 
       _state = _state.copyWith(currentStreak: newStreak, lastGoalMetDate: now);
-      await _storage.saveCurrentStreak(newStreak);
+      await _storage.saveStreak(newStreak);
       await _storage.saveLastGoalMetDate(now);
     }
   }
 
   Future<void> resetToday() async {
-    _state = _state.copyWith(currentWaterMl: 0, todayLogs: []);
-    await _storage.saveCurrentWater(0);
+    _state = _state.copyWith(currentWorkoutUnits: 0, todayLogs: []);
+    await _storage.saveCurrentWorkoutUnits(0);
     await _storage.saveTodayLogs([]);
     await _notifyAndSchedule(forceReschedule: true);
   }
