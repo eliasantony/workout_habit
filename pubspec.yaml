@@ -90,8 +90,6 @@ flutter:
     - assets/images/workout_icon.png
     - assets/sounds/notification_sound.mp3
     - assets/sounds/notification_sound_1.mp3
-    - assets/sounds/notification_sound_2.mp3
-    - assets/sounds/notification_sound_3.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

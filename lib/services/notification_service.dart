@@ -183,9 +183,11 @@ class NotificationService {
                 channelDescription: 'Daily reminders to do your workout',
                 importance: Importance.high,
                 priority: Priority.high,
-                sound: RawResourceAndroidNotificationSound(
-                  state.notificationSound,
-                ),
+                sound: state.notificationSound == 'default'
+                    ? null
+                    : RawResourceAndroidNotificationSound(
+                        state.notificationSound,
+                      ),
                 largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
                 actions: <AndroidNotificationAction>[
                   AndroidNotificationAction(
@@ -285,9 +287,11 @@ class NotificationService {
                     'Evening reminders if workout target is not met',
                 importance: Importance.high,
                 priority: Priority.high,
-                sound: RawResourceAndroidNotificationSound(
-                  state.notificationSound,
-                ),
+                sound: state.notificationSound == 'default'
+                    ? null
+                    : RawResourceAndroidNotificationSound(
+                        state.notificationSound,
+                      ),
                 largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
                 actions: <AndroidNotificationAction>[
                   AndroidNotificationAction(
@@ -347,7 +351,9 @@ class NotificationService {
       channelDescription: 'For testing notifications',
       importance: Importance.max,
       priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound(sound ?? 'notification_sound'),
+      sound: (sound == null || sound == 'default')
+          ? null
+          : RawResourceAndroidNotificationSound(sound),
       largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(

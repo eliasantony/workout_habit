@@ -171,6 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _playPreview(String soundName) async {
+    if (soundName == 'default') return;
     try {
       await _audioPlayer.stop();
       await _audioPlayer.play(AssetSource('sounds/$soundName.mp3'));
@@ -456,36 +457,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     ListTile(
                       title: const Text('Notification Sound'),
-                      subtitle: const Text('Choose your reminder sound'),
+                      subtitle: const Text('System sound can be changed in Android settings for the Workout Reminders channel.'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.play_circle_fill_rounded),
-                            color: Theme.of(context).colorScheme.primary,
-                            onPressed: () =>
-                                _playPreview(state.notificationSound),
-                            tooltip: 'Preview current sound',
-                          ),
+                          if (state.notificationSound != 'default')
+                            IconButton(
+                              icon: const Icon(Icons.play_circle_fill_rounded),
+                              color: Theme.of(context).colorScheme.primary,
+                              onPressed: () =>
+                                  _playPreview(state.notificationSound),
+                              tooltip: 'Preview current sound',
+                            ),
                           DropdownButton<String>(
                             value: state.notificationSound,
                             underline: const SizedBox(),
                             items: const [
                               DropdownMenuItem(
-                                value: 'notification_sound',
-                                child: Text('Default'),
+                                value: 'default',
+                                child: Text('System Default'),
                               ),
                               DropdownMenuItem(
                                 value: 'notification_sound_1',
                                 child: Text('Sound 1'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'notification_sound_2',
-                                child: Text('Sound 2'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'notification_sound_3',
-                                child: Text('Sound 3'),
                               ),
                             ],
                             onChanged: (value) {

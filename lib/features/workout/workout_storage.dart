@@ -265,7 +265,7 @@ class WorkoutStorage {
   }
 
   String getNotificationSound() {
-    return _prefs.getString(_keyNotificationSound) ?? 'notification_sound';
+    return _prefs.getString(_keyNotificationSound) ?? 'default';
   }
 
   Future<void> saveNotificationSound(String sound) async {
