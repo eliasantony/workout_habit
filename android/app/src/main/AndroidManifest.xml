@@ -47,26 +47,27 @@
         </receiver>
 
         <!-- Widgets -->
-        <receiver android:name=".WaterWidgetProvider" android:exported="true" android:label="Workout Habit (2x2)">
+        <receiver android:name=".WorkoutWidgetProvider" android:exported="true" android:label="Workout Habit (2x2)">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/water_widget_info" />
+                android:resource="@xml/workout_widget_info" />
         </receiver>
 
-        <receiver android:name=".WaterWidgetBarProvider" android:exported="true" android:label="Workout Habit (4x1)">
+        <receiver android:name=".WorkoutWidgetBarProvider" android:exported="true" android:label="Workout Habit (4x1)">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/water_widget_bar_info" />
+                android:resource="@xml/workout_widget_bar_info" />
         </receiver>
 
         <receiver android:name=".WidgetActionReceiver" android:exported="false">
             <intent-filter>
+                <action android:name="com.example.hydrohabit.ACTION_LOG_EXERCISE" />
                 <action android:name="com.example.hydrohabit.ACTION_ADD_WATER" />
             </intent-filter>
         </receiver>

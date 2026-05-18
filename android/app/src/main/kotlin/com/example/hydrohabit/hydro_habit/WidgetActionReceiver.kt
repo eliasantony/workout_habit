@@ -111,20 +111,20 @@ class WidgetActionReceiver : BroadcastReceiver() {
                 // 3. Force widget redraw
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 
-                val squareWidget = ComponentName(context, WaterWidgetProvider::class.java)
+                val squareWidget = ComponentName(context, WorkoutWidgetProvider::class.java)
                 val squareIds = appWidgetManager.getAppWidgetIds(squareWidget)
                 if (squareIds.isNotEmpty()) {
-                    val updateIntent = Intent(context, WaterWidgetProvider::class.java).apply {
+                    val updateIntent = Intent(context, WorkoutWidgetProvider::class.java).apply {
                         action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                         putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, squareIds)
                     }
                     context.sendBroadcast(updateIntent)
                 }
                 
-                val barWidget = ComponentName(context, WaterWidgetBarProvider::class.java)
+                val barWidget = ComponentName(context, WorkoutWidgetBarProvider::class.java)
                 val barIds = appWidgetManager.getAppWidgetIds(barWidget)
                 if (barIds.isNotEmpty()) {
-                    val updateIntent = Intent(context, WaterWidgetBarProvider::class.java).apply {
+                    val updateIntent = Intent(context, WorkoutWidgetBarProvider::class.java).apply {
                         action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
                         putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, barIds)
                     }

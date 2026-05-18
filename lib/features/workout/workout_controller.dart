@@ -125,11 +125,11 @@ class WorkoutController extends ChangeNotifier {
     );
 
     await HomeWidget.updateWidget(
-      androidName: 'WaterWidgetProvider',
+      androidName: 'WorkoutWidgetProvider',
       iOSName: 'WaterWidget',
     );
     await HomeWidget.updateWidget(
-      androidName: 'WaterWidgetBarProvider',
+      androidName: 'WorkoutWidgetBarProvider',
       iOSName: 'WaterWidget',
     );
   }

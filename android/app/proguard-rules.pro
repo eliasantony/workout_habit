@@ -7,8 +7,8 @@
 
 # Keep the MainActivity as it's the entry point
 -keep class com.example.hydrohabit.hydro_habit.MainActivity { *; }
--keep class com.example.hydrohabit.hydro_habit.WaterWidgetProvider { *; }
--keep class com.example.hydrohabit.hydro_habit.WaterWidgetBarProvider { *; }
+-keep class com.example.hydrohabit.hydro_habit.WorkoutWidgetProvider { *; }
+-keep class com.example.hydrohabit.hydro_habit.WorkoutWidgetBarProvider { *; }
 -keep class com.example.hydrohabit.hydro_habit.WidgetActionReceiver { *; }
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.** { *; }
