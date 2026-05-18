@@ -119,6 +119,10 @@ class WorkoutController extends ChangeNotifier {
       'preferredExerciseLabel',
       _state.preferredExercise.label,
     );
+    await HomeWidget.saveWidgetData(
+      'preferredExerciseUnit',
+      _state.preferredExercise.unit,
+    );
 
     await HomeWidget.updateWidget(
       androidName: 'WaterWidgetProvider',

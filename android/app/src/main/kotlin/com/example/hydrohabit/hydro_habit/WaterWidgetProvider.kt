@@ -19,23 +19,36 @@ class WaterWidgetProvider : HomeWidgetProvider() {
         try {
             for (appWidgetId in appWidgetIds) {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_square).apply {
-                    val todayMl = widgetData.getInt("todayMl", 0)
-                    val goalMl = widgetData.getInt("goalMl", 2500)
+                    val todayUnits = if (widgetData.contains("todayUnits")) {
+                        widgetData.getInt("todayUnits", 0)
+                    } else {
+                        widgetData.getInt("todayMl", 0)
+                    }
+                    val goalUnits = if (widgetData.contains("goalUnits")) {
+                        widgetData.getInt("goalUnits", 50)
+                    } else {
+                        val ml = widgetData.getInt("goalMl", 50)
+                        if (ml == 2500) 50 else ml
+                    }
+                    
+                    val preferredExerciseLabel = widgetData.getString("preferredExerciseLabel", "Push-ups") ?: "Push-ups"
+                    val preferredExerciseUnit = widgetData.getString("preferredExerciseUnit", "reps") ?: "reps"
                     
                     val progressPercent = widgetData.getInt("progress", 0)
                     
                     val streak = widgetData.getInt("streak", 0)
-                    val smallAmount = widgetData.getInt("quickAddSmall", 250)
-                    val largeAmount = widgetData.getInt("quickAddLarge", 500)
+                    val smallAmount = widgetData.getInt("quickAddSmall", 5)
+                    val largeAmount = widgetData.getInt("quickAddLarge", 10)
 
-                    setTextViewText(R.id.todayMl, todayMl.toString())
-                    setTextViewText(R.id.goalMl, "of $goalMl ml")
+                    setTextViewText(R.id.widget_title, preferredExerciseLabel)
+                    setTextViewText(R.id.todayMl, todayUnits.toString())
+                    setTextViewText(R.id.goalMl, "of $goalUnits $preferredExerciseUnit")
                     setTextViewText(R.id.streak, "\uD83D\uDD25 $streak Day Streak")
                     setProgressBar(R.id.progress_bar, 100, progressPercent, false)
 
                     // Update Button Text
-                    setTextViewText(R.id.btn_add_small, "+$smallAmount")
-                    setTextViewText(R.id.btn_add_large, "+$largeAmount")
+                    setTextViewText(R.id.btn_add_small, "+$smallAmount $preferredExerciseLabel")
+                    setTextViewText(R.id.btn_add_large, "+$largeAmount $preferredExerciseLabel")
 
                     // Add actions to buttons natively
                     val pendingIntentSmall = WidgetActionReceiver.getPendingIntent(context, smallAmount)

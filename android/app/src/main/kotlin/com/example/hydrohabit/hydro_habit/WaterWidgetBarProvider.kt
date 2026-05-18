@@ -19,21 +19,29 @@ class WaterWidgetBarProvider : HomeWidgetProvider() {
         try {
             for (appWidgetId in appWidgetIds) {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_bar).apply {
-                    val todayMl = widgetData.getInt("todayMl", 0)
+                    val todayUnits = if (widgetData.contains("todayUnits")) {
+                        widgetData.getInt("todayUnits", 0)
+                    } else {
+                        widgetData.getInt("todayMl", 0)
+                    }
+                    
+                    val preferredExerciseLabel = widgetData.getString("preferredExerciseLabel", "Push-ups") ?: "Push-ups"
+                    val preferredExerciseUnit = widgetData.getString("preferredExerciseUnit", "reps") ?: "reps"
                     
                     val progressPercent = widgetData.getInt("progress", 0)
                     
-                    val smallAmount = widgetData.getInt("quickAddSmall", 250)
-                    val largeAmount = widgetData.getInt("quickAddLarge", 500)
-                    setTextViewText(R.id.todayMl, todayMl.toString())
+                    val smallAmount = widgetData.getInt("quickAddSmall", 5)
+                    val largeAmount = widgetData.getInt("quickAddLarge", 10)
+                    
+                    setTextViewText(R.id.todayMl, "$todayUnits $preferredExerciseUnit")
                     setProgressBar(R.id.progress_bar, 100, progressPercent, false)
 
                     // Update Button Text
-                    setTextViewText(R.id.btn_add_small, "+$smallAmount")
+                    setTextViewText(R.id.btn_add_small, "+$smallAmount $preferredExerciseLabel")
                     val pendingIntentSmall = WidgetActionReceiver.getPendingIntent(context, smallAmount)
                     setOnClickPendingIntent(R.id.btn_add_small, pendingIntentSmall)
 
-                    setTextViewText(R.id.btn_add_large, "+$largeAmount")
+                    setTextViewText(R.id.btn_add_large, "+$largeAmount $preferredExerciseLabel")
                     val pendingIntentLarge = WidgetActionReceiver.getPendingIntent(context, largeAmount)
                     setOnClickPendingIntent(R.id.btn_add_large, pendingIntentLarge)
 
