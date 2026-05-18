@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
 import 'package:workout_habit/services/notification_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -16,12 +17,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   int _pendingCount = 0;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  late TextEditingController _goalController;
+  late TextEditingController _smallAddController;
+  late TextEditingController _largeAddController;
+
   @override
   void initState() {
     super.initState();
     _loadPendingCount();
     _goalController = TextEditingController(
-      text: widget.controller.state.dailyGoalMl.toString(),
+      text: widget.controller.state.dailyWorkoutTargetUnits.toString(),
     );
     _smallAddController = TextEditingController(
       text: widget.controller.state.quickAddSmall.toString(),
@@ -48,10 +53,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  late TextEditingController _goalController;
-  late TextEditingController _smallAddController;
-  late TextEditingController _largeAddController;
-
   @override
   void dispose() {
     _goalController.dispose();
@@ -64,13 +65,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _saveGoal() {
     final newGoal = int.tryParse(_goalController.text);
     if (newGoal != null && newGoal > 0) {
-      widget.controller.updateDailyGoal(newGoal);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Daily goal updated')));
+      widget.controller.updateDailyWorkoutTargetUnits(newGoal);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Daily workout target updated')),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid number')),
+        const SnackBar(content: Text('Please enter a valid target (> 0)')),
       );
     }
   }
@@ -79,13 +80,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final small = int.tryParse(_smallAddController.text);
     final large = int.tryParse(_largeAddController.text);
     if (small != null && small > 0 && large != null && large > 0) {
-      widget.controller.updateQuickAdd(small, large);
+      widget.controller.updateQuickAddSmallUnits(small);
+      widget.controller.updateQuickAddLargeUnits(large);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quick add buttons updated')),
+        const SnackBar(content: Text('Quick log presets updated')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid numbers')),
+        const SnackBar(
+          content: Text('Please enter valid positive numbers (> 0)'),
+        ),
       );
     }
   }
@@ -239,8 +243,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
               const _SectionHeader(
-                title: 'Workout Target',
+                title: 'Preferred Exercise',
+                icon: Icons.star_rounded,
+              ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Choose your preferred exercise. The Android homescreen widget quick log buttons (+5 and +10) will log this exercise.',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<ExerciseType>(
+                        initialValue: state.preferredExercise,
+                        decoration: InputDecoration(
+                          labelText: 'Preferred Exercise',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          isDense: true,
+                        ),
+                        items: ExerciseType.values.map((type) {
+                          return DropdownMenuItem<ExerciseType>(
+                            value: type,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  type.icon,
+                                  size: 20,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(type.label),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (ExerciseType? newValue) {
+                          if (newValue != null) {
+                            widget.controller.setPreferredExercise(newValue);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Preferred exercise updated to ${newValue.label}',
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              const _SectionHeader(
+                title: 'Daily Workout Target',
                 icon: Icons.fitness_center_rounded,
               ),
               Card(
@@ -250,7 +314,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'What is your daily target (in units)?',
+                        'What is your daily target?',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       const SizedBox(height: 16),
@@ -261,7 +325,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: _goalController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                suffixText: 'units',
+                                suffixText: state.preferredExercise.unit,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -287,8 +351,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
               const _SectionHeader(
-                title: 'Quick Add Buttons',
+                title: 'Quick Log Buttons',
                 icon: Icons.add_circle_outline_rounded,
               ),
               Card(
@@ -303,8 +368,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: _smallAddController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                labelText: 'Small',
-                                suffixText: 'units',
+                                labelText: 'Small Preset',
+                                suffixText: state.preferredExercise.unit,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -318,8 +383,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: _largeAddController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                labelText: 'Large',
-                                suffixText: 'units',
+                                labelText: 'Large Preset',
+                                suffixText: state.preferredExercise.unit,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -340,7 +405,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text('Update Amounts'),
+                          child: const Text('Update Presets'),
                         ),
                       ),
                     ],
@@ -348,15 +413,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
               const _SectionHeader(
-                title: 'Notifications',
+                title: 'Workout Reminders',
                 icon: Icons.notifications_active_outlined,
               ),
               Card(
                 child: Column(
                   children: [
                     SwitchListTile(
-                      title: const Text('Enable Reminders'),
+                      title: const Text('Enable Workout Reminders'),
                       subtitle: const Text(
                         'Get reminders to work out throughout the day',
                       ),
@@ -408,7 +474,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     SwitchListTile(
-                      title: const Text('Evening Goal Check'),
+                      title: const Text('Evening Workout Check'),
                       subtitle: const Text(
                         'Notify if workout target is not met by evening',
                       ),

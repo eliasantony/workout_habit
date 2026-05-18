@@ -62,7 +62,7 @@ This document outlines the phases of the **Workout Habit** migration and develop
 - [x] Implement beautiful horizontal selector for bodyweight exercises on the home screen.
 - [x] Configure quick log buttons (`+5`, `+10`, `+20`, and `Custom` on the Home Screen) to log the active exercise, showing dynamic labels (e.g. `+5 reps` or `+5 sec`).
 - [x] Refactor `LogExerciseDialog` to display custom repetitions grid inputs.
-- [ ] Redesign `SettingsScreen` to manage daily target, preferred exercise, and theme modes.
+- [x] Redesign `SettingsScreen` to manage daily target, preferred exercise, and theme modes.
 - [ ] Redesign `HistoryScreen` to display daily completed units against target, and build a bottom sheet list detailing individual exercises performed on selected days.
 
 ---
