@@ -13,7 +13,7 @@ Future<void> backgroundCallback(Uri? uri) async {
   try {
     // Assuming standard Android cache dir
     final logFile = File(
-      '/data/data/com.example.hydrohabit.hydro_habit/cache/bg_debug_log.txt',
+      '/data/data/com.eliasantony.workout_habit/cache/bg_debug_log.txt',
     );
     logFile.writeAsStringSync(
       'BACKGROUND CALLED with URI: $uri\n',

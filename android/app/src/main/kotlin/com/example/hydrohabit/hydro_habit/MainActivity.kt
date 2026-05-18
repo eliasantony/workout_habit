@@ -1,4 +1,4 @@
-package com.example.hydrohabit.hydro_habit
+package com.eliasantony.workout_habit
 
 import io.flutter.embedding.android.FlutterActivity
 

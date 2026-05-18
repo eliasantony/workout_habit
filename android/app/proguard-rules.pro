@@ -6,10 +6,10 @@
 -keep class es.antonborri.home_widget.** { *; }
 
 # Keep the MainActivity as it's the entry point
--keep class com.example.hydrohabit.hydro_habit.MainActivity { *; }
--keep class com.example.hydrohabit.hydro_habit.WorkoutWidgetProvider { *; }
--keep class com.example.hydrohabit.hydro_habit.WorkoutWidgetBarProvider { *; }
--keep class com.example.hydrohabit.hydro_habit.WidgetActionReceiver { *; }
+-keep class com.eliasantony.workout_habit.MainActivity { *; }
+-keep class com.eliasantony.workout_habit.WorkoutWidgetProvider { *; }
+-keep class com.eliasantony.workout_habit.WorkoutWidgetBarProvider { *; }
+-keep class com.eliasantony.workout_habit.WidgetActionReceiver { *; }
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.** { *; }
 -keep class io.flutter.util.** { *; }
@@ -17,8 +17,7 @@
 -keep class io.flutter.embedding.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
-# Specific app background callbacks
--keep class com.example.hydrohabit.hydro_habit.MainActivity { *; }
+# Specific app background callbacks (see line 9 above)
 
 # WorkManager
 -keep class be.tramckas.workmanager.** { *; }

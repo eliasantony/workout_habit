@@ -12,8 +12,8 @@ class AppTheme {
     0xFF10B981,
   ); // Energetic mint/teal for success and active selections
   static const Color accentColor = Color(0xFFF97316); // Warm orange for streaks
-  static const Color backgroundColor = Color(0xFFFAFBFD); // Sleek slate white
-  static const Color surfaceColor = Colors.white;
+  static const Color backgroundColor = Color(0xFFF8FAFC); // Sleek slate white
+  static const Color surfaceColor = Color(0xFFFFFFFF);
   static const Color errorColor = Color(0xFFEF5350);
 
   // Dark Mode Colors - Premium Charcoal & Workout theme
@@ -21,7 +21,7 @@ class AppTheme {
     0xFFFF8C69,
   ); // Energetic salmon coral
   static const Color backgroundColorDark = Color(
-    0xFF0F172A,
+    0xFF0F1115,
   ); // Deep charcoal slate black
   static const Color surfaceColorDark = Color(
     0xFF1E293B,

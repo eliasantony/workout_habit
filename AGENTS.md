@@ -26,7 +26,7 @@ This app is developed using the **Hydro Habit** (water tracking app) repository 
 
 > [!NOTE]
 > **Android Application ID Retention**:
-> - The native Android `applicationId` can remain as `com.example.hydrohabit.hydro_habit` during early development to minimize compilation and build friction. 
+> - The native Android `applicationId` can remain as `com.eliasantony.workout_habit` during early development to minimize compilation and build friction. 
 > - Native Kotlin class and file names (like `WaterWidgetProvider`) may remain temporarily to prevent breaking Android manifest bindings, but should be safely refactored once the functional migration of the widget completes successfully.
 
 ---

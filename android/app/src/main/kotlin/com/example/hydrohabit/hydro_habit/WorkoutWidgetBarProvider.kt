@@ -1,4 +1,4 @@
-package com.example.hydrohabit.hydro_habit
+package com.eliasantony.workout_habit
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -33,15 +33,15 @@ class WorkoutWidgetBarProvider : HomeWidgetProvider() {
                     val smallAmount = widgetData.getInt("quickAddSmall", 5)
                     val largeAmount = widgetData.getInt("quickAddLarge", 10)
                     
-                    setTextViewText(R.id.todayMl, "$todayUnits $preferredExerciseUnit")
+                    setTextViewText(R.id.todayMl, "$preferredExerciseLabel: $todayUnits $preferredExerciseUnit")
                     setProgressBar(R.id.progress_bar, 100, progressPercent, false)
 
                     // Update Button Text
-                    setTextViewText(R.id.btn_add_small, "+$smallAmount $preferredExerciseLabel")
+                    setTextViewText(R.id.btn_add_small, "+$smallAmount")
                     val pendingIntentSmall = WidgetActionReceiver.getPendingIntent(context, smallAmount)
                     setOnClickPendingIntent(R.id.btn_add_small, pendingIntentSmall)
 
-                    setTextViewText(R.id.btn_add_large, "+$largeAmount $preferredExerciseLabel")
+                    setTextViewText(R.id.btn_add_large, "+$largeAmount")
                     val pendingIntentLarge = WidgetActionReceiver.getPendingIntent(context, largeAmount)
                     setOnClickPendingIntent(R.id.btn_add_large, pendingIntentLarge)
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -141,64 +143,109 @@ Future<void> backgroundCallback(Uri? uri) async {
   }
 }
 
-void main() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded(
+    () async {
+      final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  // Keep splash screen visible while we initialize
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+      // Keep splash screen visible while we initialize
+      FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  try {
-    // Register background callback as early as possible
-    await HomeWidget.registerInteractivityCallback(backgroundCallback);
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        debugPrint('WorkoutHabit FlutterError: ${details.exceptionAsString()}');
+      };
 
-    // Initialize WorkManager for periodic background sync
-    await Workmanager().initialize(callbackDispatcher);
+      PlatformDispatcher.instance.onError = (error, stack) {
+        debugPrint('WorkoutHabit PlatformDispatcher Error: $error\n$stack');
+        return true;
+      };
 
-    // Register periodic task (every 3 hours)
-    await Workmanager().registerPeriodicTask(
-      "1", // Unique name
-      "syncTask", // Task name
-      frequency: const Duration(hours: 3),
-      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
-    );
+      try {
+        // Register background callback as early as possible
+        await HomeWidget.registerInteractivityCallback(backgroundCallback);
 
-    final notificationService = NotificationService();
-    await notificationService.init(
-      backgroundHandler: onNotificationActionBackground,
-    );
+        // Initialize WorkManager for periodic background sync
+        await Workmanager().initialize(callbackDispatcher);
 
-    // We request permissions, but don't let a rejection/delay block the app
-    notificationService.requestPermissions().timeout(
-      const Duration(seconds: 5),
-      onTimeout: () => false,
-    );
+        // Register periodic task (every 3 hours)
+        await Workmanager().registerPeriodicTask(
+          "1", // Unique name
+          "syncTask", // Task name
+          frequency: const Duration(hours: 3),
+          existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+        );
 
-    final prefs = await SharedPreferences.getInstance();
-    final storage = WorkoutStorage(prefs);
-    final workoutController = WorkoutController(storage, notificationService);
+        final notificationService = NotificationService();
+        await notificationService.init(
+          backgroundHandler: onNotificationActionBackground,
+        );
 
-    // Check if we were launched from a widget (for foreground addition)
-    final launchUri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-    if (launchUri != null) {
-      debugPrint('WorkoutHabit: Launched from widget: $launchUri');
-      backgroundCallback(launchUri);
-    }
+        // We request permissions, but don't let a rejection/delay block the app
+        notificationService.requestPermissions().timeout(
+          const Duration(seconds: 5),
+          onTimeout: () => false,
+        );
 
-    runApp(WorkoutHabitApp(workoutController: workoutController));
-  } catch (e) {
-    debugPrint('WorkoutHabit: Initialization error: $e');
-    // Fallback: try to run the app even if some services failed
-    // We might need a dummy controller or handle nulls, but for now let's try to proceed
-    // with a basic shared_preferences instance if possible.
-    final prefs = await SharedPreferences.getInstance();
-    final storage = WorkoutStorage(prefs);
-    final notificationService = NotificationService(); // Might be uninitialized
-    final workoutController = WorkoutController(storage, notificationService);
-    runApp(WorkoutHabitApp(workoutController: workoutController));
-  } finally {
-    // Always remove splash screen after a short delay to ensure UI is ready
-    Future.delayed(const Duration(milliseconds: 500), () {
-      FlutterNativeSplash.remove();
-    });
-  }
+        final prefs = await SharedPreferences.getInstance();
+        final storage = WorkoutStorage(prefs);
+        final workoutController = WorkoutController(
+          storage,
+          notificationService,
+        );
+
+        // Ensure controller is fully initialized before proceeding
+        await workoutController.ready;
+
+        // Check if we were launched from a widget (for foreground addition)
+        final launchUri = await HomeWidget.initiallyLaunchedFromHomeWidget();
+        if (launchUri != null) {
+          debugPrint('WorkoutHabit: Launched from widget: $launchUri');
+          backgroundCallback(launchUri);
+        }
+
+        runApp(WorkoutHabitApp(workoutController: workoutController));
+      } catch (e, stack) {
+        debugPrint('WorkoutHabit: Initialization error: $e\n$stack');
+        // Fallback: try to run the app even if some services failed
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final storage = WorkoutStorage(prefs);
+          final notificationService =
+              NotificationService(); // Might be uninitialized
+          final workoutController = WorkoutController(
+            storage,
+            notificationService,
+          );
+          await workoutController.ready;
+          runApp(WorkoutHabitApp(workoutController: workoutController));
+        } catch (fallbackError) {
+          debugPrint('WorkoutHabit: Fallback also failed: $fallbackError');
+          runApp(
+            MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      'Failed to start app.\n\n$e',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      } finally {
+        // Always remove splash screen after a short delay to ensure UI is ready
+        Future.delayed(const Duration(milliseconds: 500), () {
+          FlutterNativeSplash.remove();
+        });
+      }
+    },
+    (error, stack) {
+      debugPrint('WorkoutHabit runZonedGuarded Error: $error\n$stack');
+    },
+  );
 }

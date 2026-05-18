@@ -1,4 +1,4 @@
-package com.example.hydrohabit.hydro_habit
+package com.eliasantony.workout_habit
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -12,7 +12,7 @@ import org.json.JSONObject
 
 class WidgetActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == "com.example.hydrohabit.ACTION_LOG_EXERCISE" || intent.action == "com.example.hydrohabit.ACTION_ADD_WATER") {
+        if (intent.action == "com.eliasantony.workout_habit.ACTION_LOG_EXERCISE" || intent.action == "com.eliasantony.workout_habit.ACTION_ADD_WATER") {
             val amount = intent.getIntExtra("amount", 0)
             if (amount > 0) {
                 // 1. Update Flutter main app storage
@@ -137,7 +137,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
     companion object {
         fun getPendingIntent(context: Context, amount: Int): PendingIntent {
             val intent = Intent(context, WidgetActionReceiver::class.java).apply {
-                action = "com.example.hydrohabit.ACTION_LOG_EXERCISE"
+                action = "com.eliasantony.workout_habit.ACTION_LOG_EXERCISE"
                 putExtra("amount", amount)
             }
             return PendingIntent.getBroadcast(

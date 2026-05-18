@@ -18,7 +18,7 @@ This document outlines the updated design, domain models, exact modifications, a
 
 > [!NOTE]
 > **Application ID Retention**:
-> - The native Android `applicationId` will remain `com.example.hydrohabit.hydro_habit` during early migration to minimize native build friction, with the flexibility to rename later if needed. The user-facing app name in `AndroidManifest.xml` will be changed to **Workout Habit**.
+> - The native Android `applicationId` will remain `com.eliasantony.workout_habit` during early migration to minimize native build friction, with the flexibility to rename later if needed. The user-facing app name in `AndroidManifest.xml` will be changed to **Workout Habit**.
 
 ---
 

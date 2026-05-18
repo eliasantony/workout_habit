@@ -7,7 +7,7 @@
     <application
         android:label="Workout Habit"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -67,8 +67,8 @@
 
         <receiver android:name=".WidgetActionReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="com.example.hydrohabit.ACTION_LOG_EXERCISE" />
-                <action android:name="com.example.hydrohabit.ACTION_ADD_WATER" />
+                <action android:name="com.eliasantony.workout_habit.ACTION_LOG_EXERCISE" />
+                <action android:name="com.eliasantony.workout_habit.ACTION_ADD_WATER" />
             </intent-filter>
         </receiver>
 

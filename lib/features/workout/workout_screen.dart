@@ -190,21 +190,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // App Identity Section (Mascot)
-                  Center(
-                    child: Column(
-                      children: [
-                        _WorkoutMascot(progress: progress),
-                        const SizedBox(height: 12),
-                        Text(
-                          'One rep at a time. Big streaks.',
-                          style: theme.textTheme.labelSmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
                   // Horizontal Exercise Selector
                   const Text(
                     'Select Exercise',
@@ -434,61 +419,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   }
 }
 
-class _WorkoutMascot extends StatelessWidget {
-  final double progress;
-  const _WorkoutMascot({required this.progress});
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    String emoji = '💪';
-    String face = '•  •';
-
-    if (progress == 0) {
-      emoji = '😴';
-      face = 'z Z';
-    } else if (progress < 0.25) {
-      emoji = '👟';
-      face = '•  •';
-    } else if (progress < 0.75) {
-      emoji = '💪';
-      face = '•  •';
-    } else if (progress < 1.0) {
-      emoji = '🔥';
-      face = 'ᵔ  ᵔ';
-    } else {
-      emoji = '🥳';
-      face = '♥  ♥';
-    }
-
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer,
-        shape: BoxShape.circle,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 32)),
-          Positioned(
-            bottom: 12,
-            child: Text(
-              face,
-              style: TextStyle(
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-                color: Colors.black.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _BadgeChip extends StatelessWidget {
   final String icon;

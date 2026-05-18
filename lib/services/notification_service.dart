@@ -41,7 +41,7 @@ class NotificationService {
       tz.initializeTimeZones();
 
       const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('ic_stat_drop');
+          AndroidInitializationSettings('ic_stat_gym');
 
       const DarwinInitializationSettings initializationSettingsIOS =
           DarwinInitializationSettings(
@@ -178,7 +178,7 @@ class NotificationService {
             scheduledDate: scheduleTime,
             notificationDetails: NotificationDetails(
               android: AndroidNotificationDetails(
-                'reminders_channel_${state.notificationSound}',
+                'workout_reminders_v2_${state.notificationSound}',
                 'Workout Reminders',
                 channelDescription: 'Daily reminders to do your workout',
                 importance: Importance.high,
@@ -186,7 +186,7 @@ class NotificationService {
                 sound: RawResourceAndroidNotificationSound(
                   state.notificationSound,
                 ),
-                largeIcon: const DrawableResourceAndroidBitmap('ic_mascot'),
+                largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
                 actions: <AndroidNotificationAction>[
                   AndroidNotificationAction(
                     'log_${state.quickAddSmall}_units',
@@ -279,7 +279,7 @@ class NotificationService {
             scheduledDate: scheduleTime,
             notificationDetails: NotificationDetails(
               android: AndroidNotificationDetails(
-                'goal_check_channel_${state.notificationSound}',
+                'workout_goal_check_v2_${state.notificationSound}',
                 'Goal Check',
                 channelDescription:
                     'Evening reminders if workout target is not met',
@@ -288,7 +288,7 @@ class NotificationService {
                 sound: RawResourceAndroidNotificationSound(
                   state.notificationSound,
                 ),
-                largeIcon: const DrawableResourceAndroidBitmap('ic_mascot'),
+                largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
                 actions: <AndroidNotificationAction>[
                   AndroidNotificationAction(
                     'log_${state.quickAddSmall}_units',
@@ -342,13 +342,13 @@ class NotificationService {
     }
 
     final androidDetails = AndroidNotificationDetails(
-      'test_channel_${sound ?? 'default'}',
+      'test_workout_channel_v2_${sound ?? 'default'}',
       'Test Notifications',
       channelDescription: 'For testing notifications',
       importance: Importance.max,
       priority: Priority.high,
       sound: RawResourceAndroidNotificationSound(sound ?? 'notification_sound'),
-      largeIcon: const DrawableResourceAndroidBitmap('ic_mascot'),
+      largeIcon: const DrawableResourceAndroidBitmap('ic_stat_gym'),
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
           'log_${sAmount}_units',
@@ -384,7 +384,7 @@ class NotificationService {
       body: message ?? 'Successfully logged $amount units.',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
-          'workout_habit_silent',
+          'workout_silent_v2',
           'Background Updates',
           importance: Importance.low,
           priority: Priority.low,
