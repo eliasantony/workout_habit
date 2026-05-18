@@ -1,26 +1,62 @@
 # AGENTS
 
-Welcome to the Hydro Habit project! This document provides context for future AI agents working on this repository.
+Welcome to the **Workout Habit** project! This document provides critical architectural context, constraints, and instructions for future AI agents working on this repository.
+
+---
 
 ## Project Goal
-Hydro Habit is a small, lightweight Flutter app that reminds the user to drink water throughout the day. It operates locally without any backend, Firebase, or cloud sync. 
+**Workout Habit** is a premium, lightweight, local-first Flutter application designed to help users track their daily bodyweight exercises (Push-ups, Sit-ups, Squats, Planks, and Custom exercises). 
+
+This app is developed using the **Hydro Habit** (water tracking app) repository as a starter template/codebase.
+
+---
+
+## IMPORTANT: Strategic Directives
+
+> [!IMPORTANT]
+> **This is NOT an Upgrade Path**: This project represents a brand-new application launch reusing a code template. 
+> - **Do NOT preserve hydration backward compatibility.**
+> - **Do NOT implement historical hydration migration or ml-to-reps conversion.**
+> - **Wipe or ignore all legacy water-specific SharedPreferences keys on startup.**
+> - Start the app with a clean, empty workout history.
+
+> [!TIP]
+> **Use "Units" Internally**: Since different bodyweight exercises use different measurements (push-ups/sit-ups/squats use **reps**, planks use **seconds**), the internal data structures, variables, and SharedPreferences keys must use generalized **"units"** terminology (e.g. `currentWorkoutUnits`, `dailyWorkoutTargetUnits`).
+> - In the UI, display the corresponding label dynamically (e.g. `reps` or `sec`) based on the active exercise type.
+
+> [!NOTE]
+> **Android Application ID Retention**:
+> - The native Android `applicationId` can remain as `com.example.hydrohabit.hydro_habit` during early development to minimize compilation and build friction. 
+> - Native Kotlin class and file names (like `WaterWidgetProvider`) may remain temporarily to prevent breaking Android manifest bindings, but should be safely refactored once the functional migration of the widget completes successfully.
+
+---
 
 ## Architectural Guidelines
-- **State Management:** Use `ChangeNotifier` / `ValueNotifier` for local state. The app must remain lightweight.
-- **Persistence:** Use `shared_preferences` for storing settings, the daily goal, and today's consumed water amount.
-- **UI/UX:** Material 3 with a clean, hydration-inspired theme (calm blues, rounded cards, subtle gradients). The design should not look like default Flutter.
-- **Notifications:** Local notifications via `flutter_local_notifications` scheduled using `timezone`. No server push notifications.
-- **Units:** Metric units only (ml).
 
-## Important Constraints
-- Keep it simple and maintainable.
-- Do not over-engineer.
-- Always check `ROADMAP.md` to understand where we are in the development lifecycle.
-- Update `CHANGELOG.md` after any meaningful implementation step.
-- Update `AGENTS.md` if the architectural approach changes significantly.
+- **State Management**: Use `ChangeNotifier` & `ValueNotifier` for lightweight local state.
+- **Persistence**: Use `shared_preferences` for settings, daily targets, selected exercise, and history logs.
+- **UI/UX**: Material 3 with a high-contrast, premium, energetic workout-inspired theme (vibrant Coral/Sunset Orange + charcoal slate dark mode, rounded cards, subtle gradients).
+- **Notifications**: Local notifications scheduled via `flutter_local_notifications` and `timezone`. Keep notifications simple (a single daily workout reminder and an optional evening goal check).
+- **Android Widget Integration**: A 2x2 homescreen widget that synchronizes data via `home_widget`. Widget quick-log buttons (+5 and +10) must log the user's **Preferred Exercise** and display its label (e.g., "+5 Push-ups") so the logging intent is clear.
+- **Privacy First**: Fully local-only app. No cloud sync, no remote database, no server logins, and no user data ever leaves the device.
+
+---
+
+## Safety Constraints & Guardrails
+
+- **Defensive Parsing**: Ensure `ExerciseLog.fromJson` is defensive and does not crash if fields (like timestamp) are missing or malformed.
+- **Strict Validation**: Do not allow zero or negative inputs from custom logging dialogs, notification actions, widget buttons, or background executors.
+- **Incremental Compilation**: Always break migration phases into small, focused changes and compile/analyze frequently. Avoid large, high-risk native rewrites.
+
+---
 
 ## How to Work
-1. Look at the `ROADMAP.md` and `CHANGELOG.md` to get up to speed.
-2. Read the source code in `lib/` to understand the current implementation.
-3. Discuss any architectural changes before making them.
-4. Add small, focused features and verify them.
+
+1. Look at `ROADMAP.md` to see the active implementation phases and completed steps.
+2. Read the source code in `lib/` and matching native Kotlin files under `android/` to understand the structure.
+3. Make small, focused edits rather than sweeping modifications.
+4. **After any meaningful change**:
+   - Run `flutter format .`
+   - Run `flutter analyze`
+   - Run `flutter test` to ensure compile stability.
+5. Update `ROADMAP.md` tasks as you progress.

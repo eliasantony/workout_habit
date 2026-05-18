@@ -1,4 +1,10 @@
-# Hydro Habit 💧
+# Hydro Habit 💧 (Under Migration to Workout Habit 🏋️)
+
+> [!WARNING]
+> **Active Codebase Migration**: This repository is currently undergoing a complete functional migration to transform **Hydro Habit** into **Workout Habit**, a brand-new local-only bodyweight exercise habit tracker. 
+> The code is being migrated in phases (see [ROADMAP.md](ROADMAP.md) and [AGENTS.md](AGENTS.md)). The details below describe the legacy Hydro Habit app. This README will be fully rewritten after the functional migration is complete.
+
+---
 
 Hydro Habit is a lightweight, premium Flutter application designed to help you stay hydrated throughout the day. Built with a focus on privacy and simplicity, it operates entirely locally with no cloud dependencies.
 
