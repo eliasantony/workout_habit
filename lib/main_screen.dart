@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hydro_habit/features/history/history_screen.dart';
-import 'package:hydro_habit/features/hydration/hydration_controller.dart';
-import 'package:hydro_habit/features/hydration/hydration_screen.dart';
-import 'package:hydro_habit/features/hydration/widgets/add_water_dialog.dart';
+import 'package:workout_habit/features/history/history_screen.dart';
+import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/features/workout/workout_screen.dart';
+import 'package:workout_habit/features/workout/widgets/log_exercise_dialog.dart';
 
 class MainScreen extends StatefulWidget {
-  final HydrationController controller;
+  final WorkoutController controller;
 
   const MainScreen({super.key, required this.controller});
 
@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _screens = [
-      HydrationScreen(controller: widget.controller),
+      WorkoutScreen(controller: widget.controller),
       HistoryScreen(controller: widget.controller),
     ];
   }
@@ -30,24 +30,26 @@ class _MainScreenState extends State<MainScreen> {
   void _showAddDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AddWaterDialog(
+      builder: (context) => LogExerciseDialog(
         quickAddSmall: widget.controller.state.quickAddSmall,
         quickAddLarge: widget.controller.state.quickAddLarge,
         onAdd: (amount) async {
-          final oldProgress = widget.controller.state.currentWaterMl /
+          final oldProgress =
+              widget.controller.state.currentWaterMl /
               widget.controller.state.dailyGoalMl;
-          
+
           final navigator = Navigator.of(context);
-          
+
           await widget.controller.addWater(amount);
-          
+
           if (!mounted) return;
-          
-          final newProgress = widget.controller.state.currentWaterMl /
+
+          final newProgress =
+              widget.controller.state.currentWaterMl /
               widget.controller.state.dailyGoalMl;
           if (oldProgress < 1.0 && newProgress >= 1.0) {
             if (!context.mounted) return;
-            HydrationScreen.showCelebrationDialog(context, widget.controller);
+            WorkoutScreen.showCelebrationDialog(context, widget.controller);
           }
           navigator.pop();
         },
@@ -212,11 +214,7 @@ class _CenterAddButton extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.add_rounded,
-          color: Colors.white,
-          size: 32,
-        ),
+        child: const Icon(Icons.add_rounded, color: Colors.white, size: 32),
       ),
     );
   }

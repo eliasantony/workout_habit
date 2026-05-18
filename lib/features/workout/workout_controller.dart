@@ -2,25 +2,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 
-import 'package:hydro_habit/features/hydration/hydration_models.dart';
-import 'package:hydro_habit/features/hydration/hydration_storage.dart';
-import 'package:hydro_habit/services/notification_service.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
+import 'package:workout_habit/features/workout/workout_storage.dart';
+import 'package:workout_habit/services/notification_service.dart';
 
-class HydrationController extends ChangeNotifier {
-
-  final HydrationStorage _storage;
+class WorkoutController extends ChangeNotifier {
+  final WorkoutStorage _storage;
   final NotificationService _notificationService;
   final Completer<void> _initCompleter = Completer<void>();
 
-  late HydrationState _state;
+  late WorkoutState _state;
 
-  HydrationController(this._storage, this._notificationService) {
+  WorkoutController(this._storage, this._notificationService) {
     _init();
   }
 
   Future<void> get ready => _initCompleter.future;
 
-  HydrationState get state => _state;
+  WorkoutState get state => _state;
 
   Future<void> _init() async {
     final currentWater = _storage.getCurrentWater();
@@ -44,8 +43,7 @@ class HydrationController extends ChangeNotifier {
     final themeMode = _storage.getThemeMode();
     final notificationSound = _storage.getNotificationSound();
 
-
-    _state = HydrationState(
+    _state = WorkoutState(
       currentWaterMl: currentWater,
       dailyGoalMl: dailyGoal,
       lastTrackedDate: lastTrackedDate,
@@ -64,9 +62,8 @@ class HydrationController extends ChangeNotifier {
       notificationSound: notificationSound,
     );
 
-
     await _checkNewDay();
-    
+
     // Always schedule reminders on init to ensure they are active
     _notificationService.scheduleReminders(_state);
 
@@ -77,29 +74,32 @@ class HydrationController extends ChangeNotifier {
 
   Future<void> _notifyAndSchedule({bool forceReschedule = false}) async {
     notifyListeners();
-    
+
     // Check if we should reschedule reminders
-    // We only reschedule if forced (e.g. settings change) 
+    // We only reschedule if forced (e.g. settings change)
     // or if the goal was just met (to cancel them)
     if (forceReschedule || (_state.currentWaterMl >= _state.dailyGoalMl)) {
       _notificationService.scheduleReminders(_state);
     }
-    
+
     await _saveWidgetData();
   }
 
   Future<void> _saveWidgetData() async {
     final data = _state.widgetData;
-    
+
     await HomeWidget.saveWidgetData('todayMl', data.todayMl);
     await HomeWidget.saveWidgetData('goalMl', data.goalMl);
     await HomeWidget.saveWidgetData('progressPercent', data.progressPercent);
-    await HomeWidget.saveWidgetData('progress', (data.progressPercent * 100).toInt());
+    await HomeWidget.saveWidgetData(
+      'progress',
+      (data.progressPercent * 100).toInt(),
+    );
     await HomeWidget.saveWidgetData('streak', data.streak);
     await HomeWidget.saveWidgetData('goalReached', data.goalReached);
     await HomeWidget.saveWidgetData('quickAddSmall', data.quickAddSmall);
     await HomeWidget.saveWidgetData('quickAddLarge', data.quickAddLarge);
-    
+
     await HomeWidget.updateWidget(
       androidName: 'WaterWidgetProvider',
       iOSName: 'WaterWidget',
@@ -180,12 +180,17 @@ class HydrationController extends ChangeNotifier {
 
     int oldAmount = _state.currentWaterMl;
     int newAmount = oldAmount + amount;
-    
+
     _state = _state.copyWith(currentWaterMl: newAmount);
     await _storage.saveCurrentWater(newAmount);
 
     // Check for goal met and increment streak
-    await _checkGoalMet(oldAmount, newAmount, _state.dailyGoalMl, _state.dailyGoalMl);
+    await _checkGoalMet(
+      oldAmount,
+      newAmount,
+      _state.dailyGoalMl,
+      _state.dailyGoalMl,
+    );
 
     // Also save last tracked date just in case
     final now = DateTime.now();
@@ -195,7 +200,12 @@ class HydrationController extends ChangeNotifier {
     await _notifyAndSchedule();
   }
 
-  Future<void> _checkGoalMet(int oldAmount, int newAmount, int oldGoal, int newGoal) async {
+  Future<void> _checkGoalMet(
+    int oldAmount,
+    int newAmount,
+    int oldGoal,
+    int newGoal,
+  ) async {
     final wasMet = oldAmount >= oldGoal;
     final isMet = newAmount >= newGoal;
 
@@ -205,7 +215,7 @@ class HydrationController extends ChangeNotifier {
       final today = DateTime(now.year, now.month, now.day);
 
       int newStreak = _state.currentStreak;
-      
+
       if (_state.lastGoalMetDate == null) {
         newStreak = 1;
       } else {
@@ -214,7 +224,7 @@ class HydrationController extends ChangeNotifier {
           _state.lastGoalMetDate!.month,
           _state.lastGoalMetDate!.day,
         );
-        
+
         final difference = today.difference(lastGoalMet).inDays;
 
         if (difference == 1) {
@@ -230,7 +240,7 @@ class HydrationController extends ChangeNotifier {
       _state = _state.copyWith(currentStreak: newStreak, lastGoalMetDate: now);
       await _storage.saveCurrentStreak(newStreak);
       await _storage.saveLastGoalMetDate(now);
-      
+
       // Note: We don't call notifyListeners here because addWater/updateDailyGoal will call _notifyAndSchedule
     }
   }
@@ -296,7 +306,6 @@ class HydrationController extends ChangeNotifier {
     await _storage.saveNotificationSound(sound);
     await _notifyAndSchedule(forceReschedule: true);
   }
-
 
   Future<void> refreshFromStorage() async {
     // Crucial: reload shared_preferences to pick up changes from background isolates

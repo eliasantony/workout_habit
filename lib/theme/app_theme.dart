@@ -6,15 +6,25 @@ class AppTheme {
   static const Color primaryContainerColor = Color(0xFFE0F2FE); // Light blue
   static const Color secondaryColor = Color(0xFF14B8A6); // Fresh aqua/mint
   static const Color accentColor = Color(0xFFF97316); // Warm orange for streaks
-  static const Color backgroundColor = Color(0xFFF8FAFC); // Very light blue/off-white
+  static const Color backgroundColor = Color(
+    0xFFF8FAFC,
+  ); // Very light blue/off-white
   static const Color surfaceColor = Colors.white;
   static const Color errorColor = Color(0xFFEF5350);
 
   // Dark Mode Colors - Pixel Weather Inspired
-  static const Color primaryColorDark = Color(0xFF7CB9FF); // Bright, vibrant blue
-  static const Color backgroundColorDark = Color(0xFF0B0E14); // Deep charcoal/black
-  static const Color surfaceColorDark = Color(0xFF171C26); // Slightly lighter surface
-  static const Color secondaryTextColorDark = Color(0xFF9DA3AE); // Improved contrast gray
+  static const Color primaryColorDark = Color(
+    0xFF7CB9FF,
+  ); // Bright, vibrant blue
+  static const Color backgroundColorDark = Color(
+    0xFF0B0E14,
+  ); // Deep charcoal/black
+  static const Color surfaceColorDark = Color(
+    0xFF171C26,
+  ); // Slightly lighter surface
+  static const Color secondaryTextColorDark = Color(
+    0xFF9DA3AE,
+  ); // Improved contrast gray
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -167,12 +177,8 @@ class AppTheme {
           color: secondaryTextColorDark,
           fontWeight: FontWeight.w500,
         ),
-        bodyMedium: TextStyle(
-          color: Colors.white.withValues(alpha: 0.9),
-        ),
-        bodySmall: TextStyle(
-          color: secondaryTextColorDark,
-        ),
+        bodyMedium: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        bodySmall: TextStyle(color: secondaryTextColorDark),
         labelSmall: TextStyle(
           color: secondaryTextColorDark,
           letterSpacing: 0.5,
@@ -180,5 +186,4 @@ class AppTheme {
       ),
     );
   }
-
 }

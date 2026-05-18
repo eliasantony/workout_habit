@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hydro_habit/features/hydration/hydration_controller.dart';
-import 'package:hydro_habit/features/settings/settings_screen.dart';
+import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/features/settings/settings_screen.dart';
 
-class HydrationScreen extends StatefulWidget {
-  final HydrationController controller;
+class WorkoutScreen extends StatefulWidget {
+  final WorkoutController controller;
 
-  const HydrationScreen({super.key, required this.controller});
+  const WorkoutScreen({super.key, required this.controller});
 
   static void showCelebrationDialog(
-      BuildContext context, HydrationController controller) {
+    BuildContext context,
+    WorkoutController controller,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -22,10 +24,7 @@ class HydrationScreen extends StatefulWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              '🎉',
-              style: TextStyle(fontSize: 64),
-            ),
+            const Text('🎉', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 16),
             const Text(
               'Amazing work! Your body is hydrated and happy. Keep up the streak!',
@@ -50,8 +49,10 @@ class HydrationScreen extends StatefulWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Heck Yeah!'),
             ),
@@ -62,10 +63,11 @@ class HydrationScreen extends StatefulWidget {
   }
 
   @override
-  State<HydrationScreen> createState() => _HydrationScreenState();
+  State<WorkoutScreen> createState() => _WorkoutScreenState();
 }
 
-class _HydrationScreenState extends State<HydrationScreen> with WidgetsBindingObserver {
+class _WorkoutScreenState extends State<WorkoutScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -86,17 +88,19 @@ class _HydrationScreenState extends State<HydrationScreen> with WidgetsBindingOb
   }
 
   void _addWater(int amount) {
-    final oldProgress = widget.controller.state.currentWaterMl / widget.controller.state.dailyGoalMl;
+    final oldProgress =
+        widget.controller.state.currentWaterMl /
+        widget.controller.state.dailyGoalMl;
     widget.controller.addWater(amount).then((_) {
       if (!mounted) return;
-      final newProgress = widget.controller.state.currentWaterMl / widget.controller.state.dailyGoalMl;
+      final newProgress =
+          widget.controller.state.currentWaterMl /
+          widget.controller.state.dailyGoalMl;
       if (oldProgress < 1.0 && newProgress >= 1.0) {
-        HydrationScreen.showCelebrationDialog(context, widget.controller);
+        WorkoutScreen.showCelebrationDialog(context, widget.controller);
       }
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -184,11 +188,16 @@ class _HydrationScreenState extends State<HydrationScreen> with WidgetsBindingOb
                   if (isGoalReached) ...[
                     Center(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.green.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -241,9 +250,9 @@ class _HydrationScreenState extends State<HydrationScreen> with WidgetsBindingOb
                               context,
                             ).colorScheme.primaryContainer,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              isGoalReached 
-                                ? Colors.greenAccent 
-                                : theme.colorScheme.primary,
+                              isGoalReached
+                                  ? Colors.greenAccent
+                                  : theme.colorScheme.primary,
                             ),
                             strokeCap: StrokeCap.round,
                           ),
@@ -286,9 +295,9 @@ class _HydrationScreenState extends State<HydrationScreen> with WidgetsBindingOb
                           Expanded(
                             child: Text(
                               _getMotivationalText(currentWaterMl, dailyGoalMl),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
@@ -344,10 +353,10 @@ class _DropletMascot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     String emoji = '💧';
     String face = '•  •';
-    
+
     if (progress == 0) {
       emoji = '😴';
       face = 'z Z';

@@ -4,21 +4,21 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 0: Documentation Alignment [In Progress]
+## Phase 0: Documentation Alignment [Completed]
 - [x] Update `AGENTS.md` with new project goals, generalized units, and safety guidelines.
 - [x] Update `ROADMAP.md` with workout-focused phases.
 - [x] Update `implementation_plan.md` to reflect template reuse, empty history default, and no data migration.
-- [ ] Add short migration warning note at the top of `README.md` (to be fully refactored after migration).
+- [x] Add short migration warning note at the top of `README.md` (to be fully refactored after migration).
 
 ---
 
-## Phase 1: Safe Rename & Base Foundation [Pending]
-- [ ] Rename user-facing application label in `AndroidManifest.xml` to "Workout Habit".
-- [ ] Refactor package name in `pubspec.yaml` to `workout_habit`.
-- [ ] Update all package imports in `lib/` and `test/` to `package:workout_habit/...`.
-- [ ] Rename the hydration feature folder (`lib/features/hydration`) to `lib/features/workout`.
-- [ ] Rename files inside the workout folder to match workout/exercise terminology.
-- [ ] Verify clean compilation before making deep logic modifications.
+## Phase 1: Safe Rename & Base Foundation [Completed]
+- [x] Rename user-facing application label in `AndroidManifest.xml` to "Workout Habit".
+- [x] Refactor package name in `pubspec.yaml` to `workout_habit`.
+- [x] Update all package imports in `lib/` and `test/` to `package:workout_habit/...`.
+- [x] Rename the hydration feature folder (`lib/features/hydration`) to `lib/features/workout`.
+- [x] Rename files inside the workout folder to match workout/exercise terminology.
+- [x] Verify clean compilation before making deep logic modifications.
 
 ---
 

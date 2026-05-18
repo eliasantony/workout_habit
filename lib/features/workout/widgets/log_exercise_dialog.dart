@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AddWaterDialog extends StatefulWidget {
+class LogExerciseDialog extends StatefulWidget {
   final int quickAddSmall;
   final int quickAddLarge;
   final Function(int) onAdd;
 
-  const AddWaterDialog({
+  const LogExerciseDialog({
     super.key,
     required this.quickAddSmall,
     required this.quickAddLarge,
@@ -13,10 +13,10 @@ class AddWaterDialog extends StatefulWidget {
   });
 
   @override
-  State<AddWaterDialog> createState() => _AddWaterDialogState();
+  State<LogExerciseDialog> createState() => _LogExerciseDialogState();
 }
 
-class _AddWaterDialogState extends State<AddWaterDialog> {
+class _LogExerciseDialogState extends State<LogExerciseDialog> {
   final TextEditingController _textController = TextEditingController();
   bool _isCustomMode = false;
 
@@ -176,8 +176,9 @@ class _AddOption extends StatelessWidget {
         width: isWide ? double.infinity : null,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
         decoration: BoxDecoration(
-          color:
-              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),

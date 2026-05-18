@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class DailyHistory {
   final String date; // yyyy-MM-dd
   final int consumedMl;
@@ -65,7 +64,7 @@ class WidgetData {
   };
 }
 
-class HydrationState {
+class WorkoutState {
   final int currentWaterMl;
   final int dailyGoalMl;
   final DateTime lastTrackedDate;
@@ -87,8 +86,7 @@ class HydrationState {
   final ThemeMode themeMode;
   final String notificationSound;
 
-
-  const HydrationState({
+  const WorkoutState({
     required this.currentWaterMl,
     required this.dailyGoalMl,
     required this.lastTrackedDate,
@@ -107,8 +105,7 @@ class HydrationState {
     this.notificationSound = 'notification_sound',
   });
 
-
-  HydrationState copyWith({
+  WorkoutState copyWith({
     int? currentWaterMl,
     int? dailyGoalMl,
     DateTime? lastTrackedDate,
@@ -126,8 +123,7 @@ class HydrationState {
     ThemeMode? themeMode,
     String? notificationSound,
   }) {
-
-    return HydrationState(
+    return WorkoutState(
       currentWaterMl: currentWaterMl ?? this.currentWaterMl,
       dailyGoalMl: dailyGoalMl ?? this.dailyGoalMl,
       lastTrackedDate: lastTrackedDate ?? this.lastTrackedDate,
@@ -145,7 +141,6 @@ class HydrationState {
       themeMode: themeMode ?? this.themeMode,
       notificationSound: notificationSound ?? this.notificationSound,
     );
-
   }
 
   WidgetData get widgetData => WidgetData(

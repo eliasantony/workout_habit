@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:hydro_habit/features/hydration/hydration_controller.dart';
-import 'package:hydro_habit/features/hydration/hydration_models.dart';
-import 'package:hydro_habit/features/settings/settings_screen.dart';
+import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
+import 'package:workout_habit/features/settings/settings_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
-  final HydrationController controller;
+  final WorkoutController controller;
 
   const HistoryScreen({super.key, required this.controller});
 
@@ -45,12 +45,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
           final dateKey =
               "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
           if (!monthHistory.any((h) => h.date == dateKey)) {
-            monthHistory.add(DailyHistory(
-              date: dateKey,
-              consumedMl: state.currentWaterMl,
-              goalMl: state.dailyGoalMl,
-              goalReached: state.currentWaterMl >= state.dailyGoalMl,
-            ));
+            monthHistory.add(
+              DailyHistory(
+                date: dateKey,
+                consumedMl: state.currentWaterMl,
+                goalMl: state.dailyGoalMl,
+                goalReached: state.currentWaterMl >= state.dailyGoalMl,
+              ),
+            );
           }
         }
 
@@ -259,8 +261,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 color: reached
                     ? theme.colorScheme.onPrimary
                     : (isFuture
-                        ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
-                        : theme.colorScheme.onSurface),
+                          ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
+                          : theme.colorScheme.onSurface),
               ),
             ),
           ),
@@ -294,61 +296,61 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              DateFormat('EEEE, MMMM d').format(date),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Intake', style: TextStyle(fontSize: 16)),
-                Text(
-                  '$consumed / $goal ml',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                DateFormat('EEEE, MMMM d').format(date),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            LinearProgressIndicator(
-              value: (consumed / goal).clamp(0.0, 1.0),
-              minHeight: 12,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            const SizedBox(height: 24),
-            if (consumed >= goal)
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.check_circle, color: Colors.green),
-                  SizedBox(width: 8),
+                  const Text('Intake', style: TextStyle(fontSize: 16)),
                   Text(
-                    'Daily Goal Reached!',
-                    style: TextStyle(
-                      color: Colors.green,
+                    '$consumed / $goal ml',
+                    style: const TextStyle(
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
-              )
-            else
-              Text(
-                '${goal - consumed} ml remaining',
-                style: theme.textTheme.bodySmall,
               ),
-          ],
-        ),
-      );
-    },
-  );
-}
+              const SizedBox(height: 12),
+              LinearProgressIndicator(
+                value: (consumed / goal).clamp(0.0, 1.0),
+                minHeight: 12,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              const SizedBox(height: 24),
+              if (consumed >= goal)
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green),
+                    SizedBox(width: 8),
+                    Text(
+                      'Daily Goal Reached!',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Text(
+                  '${goal - consumed} ml remaining',
+                  style: theme.textTheme.bodySmall,
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _StatItem extends StatelessWidget {

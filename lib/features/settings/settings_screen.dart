@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hydro_habit/features/hydration/hydration_controller.dart';
-import 'package:hydro_habit/services/notification_service.dart';
+import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/services/notification_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final HydrationController controller;
+  final WorkoutController controller;
 
   const SettingsScreen({super.key, required this.controller});
 
@@ -41,9 +41,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load reminders: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load reminders: $e')));
       }
     }
   }
@@ -65,9 +65,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final newGoal = int.tryParse(_goalController.text);
     if (newGoal != null && newGoal > 0) {
       widget.controller.updateDailyGoal(newGoal);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Daily goal updated')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Daily goal updated')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid number')),
@@ -181,9 +181,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await _audioPlayer.play(AssetSource('sounds/$soundName.mp3'));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not play preview: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not play preview: $e')));
       }
     }
   }
@@ -200,7 +200,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
             children: [
-              const _SectionHeader(title: 'Appearance', icon: Icons.palette_outlined),
+              const _SectionHeader(
+                title: 'Appearance',
+                icon: Icons.palette_outlined,
+              ),
               Card(
                 child: Column(
                   children: [
@@ -236,7 +239,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const _SectionHeader(title: 'Hydration Goal', icon: Icons.water_drop_rounded),
+              const _SectionHeader(
+                title: 'Hydration Goal',
+                icon: Icons.water_drop_rounded,
+              ),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -267,7 +273,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ElevatedButton(
                             onPressed: _saveGoal,
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
                             ),
                             child: const Text('Save'),
                           ),
@@ -278,7 +287,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const _SectionHeader(title: 'Quick Add Buttons', icon: Icons.add_circle_outline_rounded),
+              const _SectionHeader(
+                title: 'Quick Add Buttons',
+                icon: Icons.add_circle_outline_rounded,
+              ),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -336,7 +348,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const _SectionHeader(title: 'Notifications', icon: Icons.notifications_active_outlined),
+              const _SectionHeader(
+                title: 'Notifications',
+                icon: Icons.notifications_active_outlined,
+              ),
               Card(
                 child: Column(
                   children: [
@@ -357,8 +372,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           underline: const SizedBox(),
                           items: const [
                             DropdownMenuItem(value: 60, child: Text('1 hour')),
-                            DropdownMenuItem(value: 90, child: Text('1.5 hours')),
-                            DropdownMenuItem(value: 120, child: Text('2 hours')),
+                            DropdownMenuItem(
+                              value: 90,
+                              child: Text('1.5 hours'),
+                            ),
+                            DropdownMenuItem(
+                              value: 120,
+                              child: Text('2 hours'),
+                            ),
                           ],
                           onChanged: (value) {
                             if (value != null) {
@@ -386,7 +407,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     SwitchListTile(
                       title: const Text('Evening Goal Check'),
-                      subtitle: const Text('Notify if goal is not met by evening'),
+                      subtitle: const Text(
+                        'Notify if goal is not met by evening',
+                      ),
                       value: state.eveningCheckEnabled,
                       onChanged: (value) {
                         widget.controller.updateEveningCheckEnabled(value);
@@ -410,21 +433,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           IconButton(
                             icon: const Icon(Icons.play_circle_fill_rounded),
                             color: Theme.of(context).colorScheme.primary,
-                            onPressed: () => _playPreview(state.notificationSound),
+                            onPressed: () =>
+                                _playPreview(state.notificationSound),
                             tooltip: 'Preview current sound',
                           ),
                           DropdownButton<String>(
                             value: state.notificationSound,
                             underline: const SizedBox(),
                             items: const [
-                              DropdownMenuItem(value: 'notification_sound', child: Text('Default')),
-                              DropdownMenuItem(value: 'notification_sound_1', child: Text('Sound 1')),
-                              DropdownMenuItem(value: 'notification_sound_2', child: Text('Sound 2')),
-                              DropdownMenuItem(value: 'notification_sound_3', child: Text('Sound 3')),
+                              DropdownMenuItem(
+                                value: 'notification_sound',
+                                child: Text('Default'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'notification_sound_1',
+                                child: Text('Sound 1'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'notification_sound_2',
+                                child: Text('Sound 2'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'notification_sound_3',
+                                child: Text('Sound 3'),
+                              ),
                             ],
                             onChanged: (value) {
                               if (value != null) {
-                                widget.controller.updateNotificationSound(value);
+                                widget.controller.updateNotificationSound(
+                                  value,
+                                );
                               }
                             },
                           ),
@@ -443,17 +481,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (!ns.isInitialized) {
                             await ns.init();
                           }
-                          await ns.showInstantNotification(sound: state.notificationSound);
+                          await ns.showInstantNotification(
+                            sound: state.notificationSound,
+                          );
                           _loadPendingCount();
-                          
+
                           if (!mounted) return;
-                          
+
                           messenger.showSnackBar(
-                            const SnackBar(content: Text('Test notification sent!')),
+                            const SnackBar(
+                              content: Text('Test notification sent!'),
+                            ),
                           );
                         } catch (e) {
                           if (!mounted) return;
-                          
+
                           messenger.showSnackBar(
                             SnackBar(
                               content: Text('Notification error: $e'),
@@ -466,7 +508,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     ListTile(
                       title: const Text('Scheduled Reminders'),
-                      subtitle: Text('$_pendingCount reminders currently active'),
+                      subtitle: Text(
+                        '$_pendingCount reminders currently active',
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.refresh),
                         onPressed: _loadPendingCount,
@@ -476,7 +520,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              const _SectionHeader(title: 'Danger Zone', icon: Icons.warning_amber_rounded, color: Colors.red),
+              const _SectionHeader(
+                title: 'Danger Zone',
+                icon: Icons.warning_amber_rounded,
+                color: Colors.red,
+              ),
               Card(
                 color: Colors.red.withValues(alpha: 0.05),
                 shape: RoundedRectangleBorder(
@@ -488,10 +536,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.refresh_rounded, color: Colors.red),
                   title: const Text(
                     'Reset Today\'s Progress',
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   subtitle: const Text('This will clear all entries for today'),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: Colors.red),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.red,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

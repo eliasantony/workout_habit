@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:hydro_habit/features/hydration/hydration_models.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
 
-class HydrationStorage {
+class WorkoutStorage {
   static const String _keyCurrentWater = 'current_water_ml';
   static const String _keyDailyGoal = 'daily_goal_ml';
   static const String _keyLastTrackedDate = 'last_tracked_date';
@@ -22,11 +22,10 @@ class HydrationStorage {
   static const String _keyThemeMode = 'theme_mode';
   static const String _keyNotificationSound = 'notification_sound';
 
-
   final SharedPreferences _prefs;
 
-  HydrationStorage(this._prefs);
-  
+  WorkoutStorage(this._prefs);
+
   Future<void> reload() async {
     await _prefs.reload();
   }
@@ -156,7 +155,7 @@ class HydrationStorage {
   Future<void> saveEveningCheckTime(String time) async {
     await _prefs.setString(_keyEveningCheckTime, time);
   }
-  
+
   ThemeMode getThemeMode() {
     final index = _prefs.getInt(_keyThemeMode) ?? 0; // Default to system
     return ThemeMode.values[index];
@@ -174,4 +173,3 @@ class HydrationStorage {
     await _prefs.setString(_keyNotificationSound, sound);
   }
 }
-

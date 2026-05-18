@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hydro_habit/app.dart';
-import 'package:hydro_habit/features/hydration/hydration_controller.dart';
-import 'package:hydro_habit/features/hydration/hydration_storage.dart';
-import 'package:hydro_habit/services/notification_service.dart';
+import 'package:workout_habit/app.dart';
+import 'package:workout_habit/features/workout/workout_controller.dart';
+import 'package:workout_habit/features/workout/workout_storage.dart';
+import 'package:workout_habit/services/notification_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:workmanager/workmanager.dart';
@@ -15,22 +15,22 @@ void callbackDispatcher() {
     try {
       // Initialize bindings
       WidgetsFlutterBinding.ensureInitialized();
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload();
-      final storage = HydrationStorage(prefs);
+      final storage = WorkoutStorage(prefs);
       final notificationService = NotificationService();
       await notificationService.init();
-      
+
       // Creating the controller triggers _init() -> _checkNewDay()
       // which handles resetting the day, updating the widget, and rescheduling notifications.
-      final controller = HydrationController(storage, notificationService);
+      final controller = WorkoutController(storage, notificationService);
       await controller.ready;
-      
-      debugPrint('HydroHabit: Background sync completed successfully');
+
+      debugPrint('WorkoutHabit: Background sync completed successfully');
       return Future.value(true);
     } catch (e) {
-      debugPrint('HydroHabit: Background sync error: $e');
+      debugPrint('WorkoutHabit: Background sync error: $e');
       return Future.value(false);
     }
   });
@@ -39,23 +39,23 @@ void callbackDispatcher() {
 @pragma('vm:entry-point')
 void onNotificationActionBackground(NotificationResponse response) async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   if (response.actionId == 'add_small' || response.actionId == 'add_large') {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload();
-      final storage = HydrationStorage(prefs);
+      final storage = WorkoutStorage(prefs);
       final ns = NotificationService();
       await ns.init();
-      
+
       final amount = response.actionId == 'add_small'
           ? storage.getQuickAddSmall()
           : storage.getQuickAddLarge();
-      
-      final controller = HydrationController(storage, ns);
+
+      final controller = WorkoutController(storage, ns);
       await controller.ready;
       await controller.addWater(amount);
-      
+
       if (response.id != null) {
         await ns.cancelNotification(response.id!);
       }
@@ -64,16 +64,18 @@ void onNotificationActionBackground(NotificationResponse response) async {
     }
   }
 }
+
 @pragma('vm:entry-point')
 Future<void> backgroundCallback(Uri? uri) async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   if (uri == null) return;
-  
+
   try {
-    if (uri.scheme == 'home_widget' && (uri.host == 'add_water' || uri.path.contains('add_water'))) {
+    if (uri.scheme == 'home_widget' &&
+        (uri.host == 'add_water' || uri.path.contains('add_water'))) {
       int? amount;
-      
+
       if (uri.pathSegments.isNotEmpty) {
         if (uri.host == 'add_water') {
           amount = int.tryParse(uri.pathSegments.first);
@@ -84,19 +86,19 @@ Future<void> backgroundCallback(Uri? uri) async {
           }
         }
       }
-      
+
       if (amount == null && uri.queryParameters.containsKey('amount')) {
         amount = int.tryParse(uri.queryParameters['amount']!);
       }
-      
+
       if (amount != null && amount > 0) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.reload();
-        final storage = HydrationStorage(prefs);
+        final storage = WorkoutStorage(prefs);
         final notificationService = NotificationService();
         await notificationService.init();
-        
-        final controller = HydrationController(storage, notificationService);
+
+        final controller = WorkoutController(storage, notificationService);
         await controller.ready;
         await controller.addWater(amount);
       }
@@ -108,7 +110,7 @@ Future<void> backgroundCallback(Uri? uri) async {
 
 void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Keep splash screen visible while we initialize
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
@@ -117,10 +119,8 @@ void main() async {
     await HomeWidget.registerInteractivityCallback(backgroundCallback);
 
     // Initialize WorkManager for periodic background sync
-    await Workmanager().initialize(
-      callbackDispatcher,
-    );
-    
+    await Workmanager().initialize(callbackDispatcher);
+
     // Register periodic task (every 3 hours)
     await Workmanager().registerPeriodicTask(
       "1", // Unique name
@@ -130,8 +130,10 @@ void main() async {
     );
 
     final notificationService = NotificationService();
-    await notificationService.init(backgroundHandler: onNotificationActionBackground);
-    
+    await notificationService.init(
+      backgroundHandler: onNotificationActionBackground,
+    );
+
     // We request permissions, but don't let a rejection/delay block the app
     notificationService.requestPermissions().timeout(
       const Duration(seconds: 5),
@@ -139,27 +141,27 @@ void main() async {
     );
 
     final prefs = await SharedPreferences.getInstance();
-    final storage = HydrationStorage(prefs);
-    final hydrationController = HydrationController(storage, notificationService);
+    final storage = WorkoutStorage(prefs);
+    final workoutController = WorkoutController(storage, notificationService);
 
     // Check if we were launched from a widget (for foreground addition)
     final launchUri = await HomeWidget.initiallyLaunchedFromHomeWidget();
     if (launchUri != null) {
-      debugPrint('HydroHabit: Launched from widget: $launchUri');
+      debugPrint('WorkoutHabit: Launched from widget: $launchUri');
       backgroundCallback(launchUri);
     }
 
-    runApp(HydroHabitApp(hydrationController: hydrationController));
+    runApp(WorkoutHabitApp(workoutController: workoutController));
   } catch (e) {
-    debugPrint('HydroHabit: Initialization error: $e');
+    debugPrint('WorkoutHabit: Initialization error: $e');
     // Fallback: try to run the app even if some services failed
     // We might need a dummy controller or handle nulls, but for now let's try to proceed
     // with a basic shared_preferences instance if possible.
     final prefs = await SharedPreferences.getInstance();
-    final storage = HydrationStorage(prefs);
+    final storage = WorkoutStorage(prefs);
     final notificationService = NotificationService(); // Might be uninitialized
-    final hydrationController = HydrationController(storage, notificationService);
-    runApp(HydroHabitApp(hydrationController: hydrationController));
+    final workoutController = WorkoutController(storage, notificationService);
+    runApp(WorkoutHabitApp(workoutController: workoutController));
   } finally {
     // Always remove splash screen after a short delay to ensure UI is ready
     Future.delayed(const Duration(milliseconds: 500), () {

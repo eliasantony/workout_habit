@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:hydro_habit/features/hydration/hydration_models.dart';
+import 'package:workout_habit/features/workout/workout_models.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -124,7 +124,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.cancel(id: id);
   }
 
-  Future<void> scheduleReminders(HydrationState state) async {
+  Future<void> scheduleReminders(WorkoutState state) async {
     try {
       // Cancel reminder IDs
       for (int i = 0; i < maxReminderNotifications; i++) {
@@ -250,7 +250,7 @@ class NotificationService {
     }
   }
 
-  Future<void> scheduleEveningCheck(HydrationState state) async {
+  Future<void> scheduleEveningCheck(WorkoutState state) async {
     try {
       // Always cancel first to avoid duplicate/stale ones
       for (int i = 0; i < maxEveningCheckNotifications; i++) {
