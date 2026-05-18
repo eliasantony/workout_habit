@@ -67,11 +67,11 @@ This document outlines the phases of the **Workout Habit** migration and develop
 
 ---
 
-## Phase 5: Notifications Simplification [Pending]
+## Phase 5: Notifications Simplification [Complete]
 - [x] Refactor `NotificationService` to support simplified notification schedules.
-- [ ] Implement Switch 1: Daily Workout Reminder (Toggle and Time Picker).
-- [ ] Implement Switch 2: Evening Target Check (Toggle and Time Picker).
-- [ ] Update notification text to gym motivation quotes and verify background actions log to the preferred exercise.
+- [x] Implement Switch 1: Daily Workout Reminder (Toggle and Time Picker).
+- [x] Implement Switch 2: Evening Target Check (Toggle and Time Picker).
+- [x] Update notification text to gym motivation quotes and verify background actions log to the preferred exercise.
 
 ---
 

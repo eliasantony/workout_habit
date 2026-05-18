@@ -122,11 +122,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _selectTime(BuildContext context, bool isStart) async {
+  Future<void> _selectDailyReminderTime(BuildContext context) async {
     final state = widget.controller.state;
-    final currentTimeString = isStart
-        ? state.reminderStartTime
-        : state.reminderEndTime;
+    final currentTimeString = state.reminderStartTime;
 
     final parts = currentTimeString.split(':');
     final initialTime = TimeOfDay(
@@ -143,17 +141,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final formattedTime =
           '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
 
-      if (isStart) {
-        widget.controller.updateReminderTimeRange(
-          formattedTime,
-          state.reminderEndTime,
-        );
-      } else {
-        widget.controller.updateReminderTimeRange(
-          state.reminderStartTime,
-          formattedTime,
-        );
-      }
+      widget.controller.updateReminderTimeRange(
+        formattedTime,
+        state.reminderEndTime,
+      );
     }
   }
 
@@ -422,9 +413,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     SwitchListTile(
-                      title: const Text('Enable Workout Reminders'),
+                      title: const Text('Daily Workout Reminder'),
                       subtitle: const Text(
-                        'Get reminders to work out throughout the day',
+                        'Choose when you want your daily workout nudge.',
                       ),
                       value: state.remindersEnabled,
                       onChanged: (value) {
@@ -434,41 +425,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (state.remindersEnabled) ...[
                       const Divider(height: 1, indent: 16, endIndent: 16),
                       ListTile(
-                        title: const Text('Reminder Interval'),
-                        trailing: DropdownButton<int>(
-                          value: state.reminderIntervalMins,
-                          underline: const SizedBox(),
-                          items: const [
-                            DropdownMenuItem(value: 60, child: Text('1 hour')),
-                            DropdownMenuItem(
-                              value: 90,
-                              child: Text('1.5 hours'),
-                            ),
-                            DropdownMenuItem(
-                              value: 120,
-                              child: Text('2 hours'),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            if (value != null) {
-                              widget.controller.updateReminderInterval(value);
-                            }
-                          },
-                        ),
-                      ),
-                      const Divider(height: 1, indent: 16, endIndent: 16),
-                      ListTile(
-                        title: const Text('Active From'),
+                        title: const Text('Reminder Time'),
                         trailing: TextButton(
-                          onPressed: () => _selectTime(context, true),
+                          onPressed: () => _selectDailyReminderTime(context),
                           child: Text(state.reminderStartTime),
-                        ),
-                      ),
-                      ListTile(
-                        title: const Text('Active Until'),
-                        trailing: TextButton(
-                          onPressed: () => _selectTime(context, false),
-                          child: Text(state.reminderEndTime),
                         ),
                       ),
                     ],
@@ -476,14 +436,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SwitchListTile(
                       title: const Text('Evening Workout Check'),
                       subtitle: const Text(
-                        'Notify if workout target is not met by evening',
+                        'Get a second reminder near the end of the day.',
                       ),
                       value: state.eveningCheckEnabled,
                       onChanged: (value) {
                         widget.controller.updateEveningCheckEnabled(value);
                       },
                     ),
-                    if (state.eveningCheckEnabled)
+                    if (state.eveningCheckEnabled) ...[
+                      const Divider(height: 1, indent: 16, endIndent: 16),
                       ListTile(
                         title: const Text('Check Time'),
                         trailing: TextButton(
@@ -491,6 +452,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Text(state.eveningCheckTime),
                         ),
                       ),
+                    ],
                     const Divider(height: 1, indent: 16, endIndent: 16),
                     ListTile(
                       title: const Text('Notification Sound'),
@@ -551,6 +513,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                           await ns.showInstantNotification(
                             sound: state.notificationSound,
+                            smallAmount: state.quickAddSmall,
+                            bigAmount: state.quickAddLarge,
+                            preferredExercise: state.preferredExercise,
                           );
                           _loadPendingCount();
 
